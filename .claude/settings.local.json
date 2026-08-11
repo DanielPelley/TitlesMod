@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(& \"C:\\\\Users\\\\danie\\\\IdeaProjects\\\\TitlesMod\\\\design\\\\build-workbook.ps1\")"
+    ]
+  }
+}
