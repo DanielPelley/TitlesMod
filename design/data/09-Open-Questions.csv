@@ -1,0 +1,15 @@
+#|Question|Why It Matters|Options|Your Answer
+1|How many equip slots and can that number grow?|Defines the entire balance model|3 fixed / start at 1 and unlock more / scales with total titles earned|ANSWERED - 10 slots - fixed. Unique and Limited titles stack on top of the 10 and are budget-exempt.
+2|Single player or multiplayer first?|Limited and Unique titles are meaningless in single player. Half the mod's identity depends on this|SP-first with scarcity disabled / MP-first / both with a config toggle|ANSWERED - multiplayer-first but single player must work just as smoothly. Same code path - the integrated server makes this free.
+7|NeoForge only or both loaders?|Doubling loaders early roughly doubles the work|NeoForge only / Fabric only / both|ANSWERED - NeoForge.
+3|Should titles be visible to other players?|Drives whether this is a personal RPG sheet or a social status system. Given the multiplayer-first answer this now matters a lot more|Private / nameplate + chat prefix / opt-in|
+4|Do you want a title level or prestige system later?|Changes the data model now - retrofitting levels is painful|Flat titles / titles level up with continued progress|
+5|What is the target playstyle - vanilla-plus or full RPG overhaul?|Decides magnitude ranges. The 40-point budget assumes vanilla-plus. An overhaul would roughly double every number|Vanilla-plus / overhaul|
+6|Should title effects work in PvP?|Uncapped PvP scaling will get the mod banned from servers. With 10 slots this is now a bigger deal than it was at 3|Full effect / reduced in PvP / config toggle|
+8|Any conflict with existing mods in this space?|Worth 20 minutes on Modrinth before naming it|Check "titles" "ranks" "prestige" on Modrinth|
+9|Do titles interact with each other?|Set bonuses and synergies are a great hook. With 10 slots there is real room for them now|None / synergy pairs / full set bonuses|
+10|Server-wide or per-world scarcity on a multi-world server?|Affects where the SavedData lives|Per-world / global via a shared file|
+11|What is the mod's actual name?|Everything downstream uses the mod id|-|
+12|Do you want an achievement-style completion reward?|"Earn 25 titles" as a meta-title is a strong long-term hook|Yes as meta-titles / no|
+13|Should the 40-point budget be flat or grow with progression?|Flat means late players choose between titles forever. Growing means the cap is a progression track of its own|Flat 40 / grows from 10 to 40 as you earn titles|
+14|Target 26.1 stable or 26.2 beta?|NeoForge has no stable 26.2 release yet - only 26.2.0.41-beta. 26.1 is stable at 26.1.2.93|26.1 stable / 26.2 beta|

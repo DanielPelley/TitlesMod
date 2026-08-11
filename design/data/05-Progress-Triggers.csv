@@ -1,0 +1,18 @@
+Trigger Family|Best Source|Why|Example Call or Hook|Perf Cost|Exploit Risk|Mitigation
+Blocks mined by type|Vanilla statistics|Already tracked per block per player and already saved to disk. Free.|player.getStats().getValue(Stats.BLOCK_MINED, Blocks.STONE)|None|Place-and-break loops inflate counts|Require net-new blocks or check the block was not player-placed. NeoForge can flag placed blocks with a chunk attachment
+Mobs killed by type|Vanilla statistics|Tracked per entity type per player|Stats.ENTITY_KILLED with an EntityType|None|Mob farms make kill counts trivial|Raise thresholds or require kills without a farm nearby. Honestly - just accept farms for common titles
+Items crafted|Vanilla statistics|Tracked per item|Stats.ITEM_CRAFTED|None|Craft-uncraft loops|Use items that cannot be uncrafted or count distinct types
+Deaths / damage taken / distance|Vanilla statistics|All tracked already|Stats.DEATHS Stats.DAMAGE_TAKEN Stats.WALK_ONE_CM|None|Low|-
+Playtime and time since death|Vanilla statistics|Both exist|Stats.PLAY_TIME and Stats.TIME_SINCE_DEATH|None|AFK farms inflate playtime|Use TIME_SINCE_DEATH which is what survival titles actually want
+Complex compound conditions|Vanilla advancement criteria|Advancements are already a JSON predicate engine with entity/damage/location/item predicates. Do not rebuild this.|Custom advancement with a title id in its reward or a listener on AdvancementEvent|None|Advancement command grants|Disable /advancement for non-ops or listen for legitimate grants only
+Damage dealt or taken with conditions|Event hook|Stats cannot express "while below 4 hearts"|NeoForge LivingIncomingDamageEvent / LivingDamageEvent.Pre|Low|Low|Cache the equipped-title effect list per player - do not stream over titles every hit
+Block break speed and tool tier|Event hook|Needs two separate hooks|PlayerEvent.BreakSpeed AND PlayerEvent.HarvestCheck (or the 26.x equivalents)|Low|Low|Speed without the harvest check means you mine fast and get nothing
+Biome / dimension presence|Tick sampler|No vanilla stat for this|Every 100 ticks on the server player list|Low if sampled|AFK in a biome|Fine - that is the intended cost
+Standing in armor / holding an item|Tick sampler|No vanilla stat|Every 40-100 ticks|Low if sampled|Low|Never do this every tick for every player
+Chest opens / container loot|Event hook|Needs the loot table origin|Container open event + loot table id check|Low|Re-opening the same chest|Store opened-chest positions in a bounded LRU per player
+Fishing / breeding / trading|Vanilla statistics|Stats.FISH_CAUGHT ANIMALS_BRED TRADED_WITH_VILLAGER|Free|None|Automated farms|Accept it or add a manual-action check
+Server-first claims|Server SavedData|The ledger is the source of truth|On the server tick that the condition passes - claim under the ledger before granting|None|Race between two players in the same tick|The server tick is single-threaded. Check-then-claim in one synchronous block and it is genuinely safe
+|||||||
+EVALUATION MODEL|Do NOT re-evaluate every title for every player every tick.||||||
+Recommended|Titles register the trigger families they care about. When a matching event fires for a player only that player's candidate titles are re-checked. Plus one low-frequency sweep every 200 ticks for tick-sampler titles.||||||
+Recommended|Once a title is earned it is removed from that player's candidate set permanently. The check cost drops as players progress.||||||

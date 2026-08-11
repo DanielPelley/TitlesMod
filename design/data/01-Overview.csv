@@ -1,0 +1,23 @@
+Field|Value|Notes
+Working Title|Titles: A LitRPG Progression Mod|Rename freely - the mod id below is what matters for code
+Mod ID|titles|Lowercase a-z0-9_ only. Check it is unused on Modrinth/CurseForge before committing
+Concept|Players earn persistent Titles for in-game accomplishments. Titles grant passive stat bonuses and unique powers.|Collection + prestige + build customization
+Core Loop|Play normally -> hit a hidden or public milestone -> earn Title -> equip it in the Titles screen -> gain a passive bonus -> chase rarer Titles|
+Equip Model|10 equip slots capped at a 40-point power budget. Unique and Limited titles stack on top - slot-exempt and budget-exempt.|DECIDED. See the Balance Model sheet
+Audience|Multiplayer-first. Single player must work identically.|DECIDED. Server-authoritative code makes SP free via the integrated server
+Target Game Version|26.1 (RECOMMENDED) - NeoForge 26.1.2.93 is stable|26.2 exists but NeoForge has only 26.2.0.41-beta. Beta means breaking changes are still allowed - a bad place to learn the API
+Upgrade Path|Move to 26.2 once NeoForge drops the -beta suffix|With unobfuscated mappings the port is cheap. Do not start on a moving target
+Mod Loader|NeoForge - DECIDED|Best event coverage for damage hooks / break-speed / tool-tier overrides
+JDK Required|Java 25|NeoForge docs require JDK 25 for this version line. You currently have 17 and 24 - neither will work
+Mappings|Mojang official (no obfuscation)|26.1 was the first fully unobfuscated release - parameter names included
+Java Version|Java 21+|Confirm against the 26.2 toolchain before generating the project
+Build Tool|Gradle + ModDevGradle (NeoForge) or Loom (Fabric)|NeoGradle is legacy for this version line
+Sided-ness|Server-authoritative. Client is display only.|All title grants/checks run on the logical server and sync via packets
+Persistence - Per Player|Data Attachment (NeoForge) / component or NBT (Fabric)|Survives death and dimension change. Set copyOnDeath
+Persistence - Per World|SavedData / PersistentState on the overworld|Holds the server-wide ledger for Limited and Unique titles
+Data-driven?|Yes - titles defined in JSON under data/<namespace>/title/|Lets you and datapack authors add titles without recompiling
+Config|Server config (balance, scarcity toggles) + client config (HUD position)|Keep balance numbers out of code
+Min Viable Scope|~12 titles, 4 effect types, 1 screen, 1 keybind|Ship this before writing 60 titles
+Stretch Scope|Title sets/synergies, seasonal resets, leaderboard, chat prefix, nameplate render|
+Biggest Technical Risk|Server-wide Limited/Unique title claims must be race-free and survive crashes|Single-threaded server tick makes this tractable - just do not do it async
+Biggest Design Risk|Limited-quantity titles create FOMO and grief in multiplayer|See the Design Decisions sheet for mitigations

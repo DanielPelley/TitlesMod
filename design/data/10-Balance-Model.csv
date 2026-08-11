@@ -1,0 +1,40 @@
+Rule|Value|Rationale
+Equip slots|10|Player decision. Enough room for a real build identity.
+Budget cap on equipped titles|40 points - server configurable|Slots alone are not a limiter. 10 Legendary titles would be roughly 95 points which is about +100% damage and +20 hearts. The budget is what actually holds the mod together.
+Do scarce titles use budget?|No - Unique - Limited and Contested titles are budget-exempt and stack on top of the 10|Player decision. Makes them feel genuinely special rather than a slot tax.
+Scarce title power ceiling|Max 5 points of raw stats each regardless of rarity|THIS IS THE RULE THAT MAKES BUDGET-EXEMPT SAFE. A scarce title earns its rarity through a signature power and public prestige - not big numbers. Otherwise a veteran holding 9 scarce titles has ~90 free points and the budget cap becomes meaningless.
+Scarce title signature power|One memorable non-stat ability - utility - cosmetic or situational|Fall immunity - water breathing - sculk invisibility - a revive. Impressive to have and to watch. Not a raw DPS increase.
+DELIBERATE EXCEPTION|The Immortal's revive is on a 1 in-game day cooldown - roughly one free totem per 20 minutes of play|Player decision - accepted as knowingly overpowered. It is the reward for 150 deathless days and up to 10 players per server can hold it. If it proves too strong in play the dial to turn is the cooldown - not the title. Put the cooldown in the server config.
+Meta-titles (PROPOSED)|Collector +2 - Archivist +4 - Chronicler +6. Slot-exempt and budget-exempt. They grant budget rather than stats.|Answers Open Question 13 without making the cap a config number. A player who has earned half the mod ends at 52 instead of 40 - about one extra Rare title's worth of room - and the collection itself becomes the progression track. Grant no raw stats or they double-dip.
+Per-attribute hard caps|See table below|Second safety net. Even inside 40 points a player could dump everything into one attribute. Hard caps mean no single stat can run away.
+|||
+Sample builds at the 40-point cap|Composition|Total
+Broad generalist|10 Common/Uncommon titles|~25 - well under cap. Early game is unconstrained by design.
+Balanced mid-game|4 Rare + 4 Uncommon + 2 Common|~39
+Specialist|4 Legendary|~38 - four slots used - six empty. Depth over breadth.
+Hybrid endgame|2 Legendary + 3 Rare + 5 Common|~42 - REFUSED. Drop one Common to fit.
+Endgame veteran|40 points equipped + 6 scarce titles|40 + ~22 exempt = 62 effective. Feels earned rather than broken because the exempt 22 is mostly utility.
+|||
+Attribute|Hard Cap From Titles|Note
+max_health|+10.0 (5 hearts)|Vanilla is 20. This is a 50% ceiling.
+armor|+4.0|Two armor points is already meaningful
+armor_toughness|+4.0|
+knockback_resistance|+0.4|1.0 is total immunity - never approach it
+attack_damage|+25%|The single most sensitive number in the mod
+attack_speed|+15%|Multiplies with attack_damage - keep it tight
+movement_speed|+15%|Above 20% some server anti-cheat flags players
+jump_strength|+15%|
+luck|+4.0|
+block_break_speed|+40%|Mining speed is low-risk - a generous cap is fine
+mining_efficiency|+5.0|
+interaction range|+2.0|PvP-sensitive
+DMG_VS_TYPE per entity type tag|+30%|Per tag - not total across tags
+DMG_RESIST_FROM_TYPE total|-40%|Sum across all sources. Stacking resistances to near-immunity is the classic break
+potion duration|+50%|
+xp gain|+50%|
+fall damage reduction|-60% (before Unique exemptions)|First Dragonslayer's immunity is deliberately outside this
+|||
+Implementation note|Enforce the budget cap in the equip handler on the SERVER. Refuse the equip and send a message. Never trust the client.|
+Implementation note|Enforce per-attribute caps at modifier-application time - after summing all equipped and scarce contributions - by clamping the final total.|
+Implementation note|Show remaining budget live in the Titles screen as "31 / 40". Players will optimise against it and that is the fun.|
+Implementation note|Every number here belongs in the server config so pack authors can rebalance without forking.|

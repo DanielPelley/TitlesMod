@@ -1,0 +1,13 @@
+# IntelliJ IDEA — per-machine IDE state
+.idea/
+*.iws
+
+# Excel lock files left behind by build-workbook.ps1 if Excel is open
+~$*.xlsx
+
+# Gradle / NeoForge build output (once the mod has code)
+.gradle/
+build/
+out/
+run/
+runs/

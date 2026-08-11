@@ -1,0 +1,22 @@
+Element|Description|Detail|Priority|Status
+Open method|Keybind (default K) plus a /titles command|Command matters for servers where keybinds conflict|P0|Planned
+Layout|Left: scrollable grid of title cards. Right: detail panel for the selected title.|Grid of 4 columns fits a standard 176px-wide GUI poorly - build a wider custom screen around 256x220|P0|Planned
+Title card|Name in rarity color plus a small rarity pip and an equipped indicator|Locked cards are grayed. Secret unearned cards show ??? only|P0|Planned
+Detail panel|Full name - rarity - scarcity - flavor text - bulleted effect list with exact numbers|Show real numbers not vague words. LitRPG players want the stat block|P0|Planned
+Effect list rendering|Generated from the effect data not hand-written strings|One display formatter per effect type. Otherwise your tooltips drift from the code|P0|Planned
+Equip slots|10 slots in two rows of 5. Drag or click to equip.|Equipping is a server round trip - never apply optimistically on the client|P0|Planned
+Budget meter|Prominent "31 / 40" readout beside the slots that updates as you hover a candidate title|Show the projected total on hover before the player commits. Over-budget candidates render red and refuse the equip.|P0|Planned
+Scarce title shelf|Separate always-on row below the 10 slots for Unique and Limited titles|Visually distinct - these are not equipped and cannot be unequipped. Label it so nobody thinks they are wasting slots.|P0|Planned
+Per-attribute cap feedback|When a cap is hit show the contributing effect struck through with "capped"|Otherwise players stack two damage titles and quietly get nothing for the second|P1|Planned
+Progress bars|For unearned non-secret titles show current/required|Requires syncing progress counters to the client - throttle to once a second while the screen is open|P1|Planned
+Filters|Tabs or dropdown by category plus toggles for Earned / Unearned / Secret|Becomes essential past about 30 titles|P1|Planned
+Search box|Filter by name and effect keyword|Cheap to add and very appreciated|P1|Planned
+Sort|By rarity - category - recently earned|P2|P2|Planned
+Scarcity display|For Limited and Founding titles show "2 of 3 claimed" and who holds them|Needs a synced server ledger snapshot. Big driver of the prestige feeling. Suppressed for secret titles until first claim - see the row below|P1|Planned
+Secret scarce titles|DECIDED - a secret title with a limited number of holders stays fully hidden until the FIRST player claims it. That claim broadcasts server-wide and permanently reveals the title - name - hint - holder roster and remaining slots - to everyone. The remaining slots then become a public race.|Resolves the collision between "secret shows ??? " and "scarce shows 2 of 3 claimed" - you cannot do both before the reveal or the counter leaks the secret. Reveal is a one-way flag on the ledger entry - not per-player - so everyone sees the same state. Currently applies to Monster Slayer (Founding 10) and Pacifist (Limited 3).|P1|Planned
+Earn notification|Toast plus a sound plus an optional server broadcast for Legendary and above|Reuse the vanilla advancement toast style so it feels native. For a secret scarce title the FIRST claim always broadcasts regardless of rarity - that broadcast is what performs the reveal|P0|Planned
+Secret hint system|Optional per-title hint string revealed after partial progress|Keeps secret titles discoverable rather than wiki-only|P2|Planned
+HUD element|Optional small equipped-title display near the hotbar|Client config for position and visibility|P2|Planned
+Nameplate / chat prefix|Show the primary equipped title above the player and before chat messages|Very popular in multiplayer. Make it toggleable - some servers hate it|P2|Planned
+Accessibility|Never encode meaning in color alone - the rarity pip shape and the text label carry it too|Also respect the vanilla GUI scale and narrator|P1|Planned
+Sync protocol|Server sends the full title state on join and deltas on change. Client never computes eligibility.|Payload stays small if you send ids not full definitions - the client already has the registry from the datapack sync|P0|Planned

@@ -1,0 +1,23 @@
+Rarity|Hex Color|MC Format|Starter Roll Weight|Power Budget|Typical Unlock Effort|Count in Sheet|UI Treatment
+Common|AAAAAA|gray|50|1-4|Minutes to an hour of normal play|47|Plain text
+Uncommon|55FF55|green|28|3-4|A full session of focused play|16|Plain text
+Rare|55FFFF|aqua|14|5-6|Several sessions or a boss/structure|18|Subtle shimmer on hover
+Epic|FF55FF|light_purple|6|7-8|Long-term grind or a hard challenge|7|Animated gradient border
+Legendary|FFAA00|gold|2|9-10|Server-notable achievement|8|Full-card glow + server broadcast on earn
+Mythic|FF5555|red|0|11-13|Once-per-world class event|4|Screen flash + title card + broadcast
+|||||||
+Scarcity Type|Meaning|Max Holders|On Holder Death|On Holder Inactivity|On Server Reset|Recommended Use
+Unlimited|Anyone who meets the condition gets it|Unbounded|Kept|Kept|Kept|Default for 90% of titles
+Limited|Only N players on the server may hold it at once|2-10|Kept|Kept - NEVER released|Released|Prestige grind titles. An inactive holder keeps the slot forever - see the never-revoked rule below
+Unique|Exactly one holder for the life of the world|1|Kept|Kept|Released|First-to-do-X achievements
+Founding|The first N players ever to meet the condition claim it - then it is closed forever and never reopens|10-50 - set per title|Kept|Kept - NEVER released|Released|Founder titles and first-N-to-achieve races. Unlike Limited this is not a rotating pool - being early is a historical fact and cannot be taken back
+Contested|Unique but transferable - a new claimant takes it from the holder|1|Kept|Kept|Released|THE ONLY REVOCABLE SCARCITY TYPE. Lost only when another player beats the holder's score - never on death and never on inactivity. Used by The Unrivaled alone
+|||||||
+Note|Starter Roll Weight is the relative chance of that rarity in the free title granted on first join. Weights sum to 100 across Common..Legendary.||||||
+Note|DECIDED - TITLES ARE NEVER REVOKED. Once earned a title is yours permanently - it survives death - inactivity - and dimension change. The sole exception is the Contested type - currently The Unrivaled alone - which passes to whoever beats the holder's score.||||||
+Note|DECIDED - Secret is NOT a rarity. It is a Yes/No flag on the Titles sheet that is orthogonal to rarity. A secret title has a normal rarity and normal power - the player just does not know it exists until it fires. 8 titles are currently flagged secret.||||||
+Note|Secret titles carry a Hint string on the Titles sheet. The Titles screen shows ??? plus the hint once partial progress is detected - see the UI Spec sheet - so they stay discoverable instead of becoming wiki chores.||||||
+Note|Common runs 1-4 points rather than 1-2. Single-mob damage titles sit at 2 and the broad-tag or max-health commons sit at 3-4. Ten commons equipped is roughly 25-30 points - still under the 40 cap by design.||||||
+Note|Power Budget is a soft cap. Sum the point costs on the Effect Catalog sheet and keep a title at or under its rarity budget.||||||
+Note|DECIDED - a player equips up to 10 titles at once plus every Unique and Limited title they hold. Unique and Limited titles are budget-exempt. See the Balance Model sheet.||||||
+Note|DECIDED - equipped titles are capped at a 40-point total budget. Scarce titles are exempt from the budget but capped at 5 points of raw stats each.||||||

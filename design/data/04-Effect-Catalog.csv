@@ -1,0 +1,42 @@
+Effect Type|Implementation Hook|Vanilla Attribute ID (verify vs 26.2 registry)|Example Magnitude|Point Cost|Difficulty|Notes
+ATTR_MAX_HEALTH|AttributeModifier ADD_VALUE|minecraft:max_health|+4.0 (2 hearts)|4|Easy|Remove modifier on unequip or players keep the hearts
+ATTR_ARMOR|AttributeModifier ADD_VALUE|minecraft:armor|+2.0|3|Easy|Flat armor points - very strong early
+ATTR_ARMOR_TOUGHNESS|AttributeModifier ADD_VALUE|minecraft:armor_toughness|+2.0|3|Easy|Reduces high-damage-hit scaling
+ATTR_KNOCKBACK_RESIST|AttributeModifier ADD_VALUE|minecraft:knockback_resistance|+0.2 (20%)|2|Easy|1.0 = immune. Keep low
+ATTR_ATTACK_DAMAGE|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:attack_damage|+10%|4|Easy|Multiplied applies after weapon damage
+ATTR_ATTACK_SPEED|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:attack_speed|+10%|4|Easy|Big DPS impact - be conservative
+ATTR_MOVEMENT_SPEED|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:movement_speed|+5%|3|Easy|Above +20% feels broken and breaks some anti-cheat
+ATTR_LUCK|AttributeModifier ADD_VALUE|minecraft:luck|+1.0|3|Easy|Only affects loot tables with quality/bonus_rolls - fishing, chests
+ATTR_BLOCK_BREAK_SPEED|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:block_break_speed|+15%|3|Easy|Global mining speed multiplier
+ATTR_MINING_EFFICIENCY|AttributeModifier ADD_VALUE|minecraft:mining_efficiency|+2.0|3|Easy|Behaves like the Efficiency enchant term
+ATTR_SUBMERGED_MINING|AttributeModifier ADD_VALUE|minecraft:submerged_mining_speed|+0.5|1|Easy|Removes the underwater mining penalty
+ATTR_SNEAKING_SPEED|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:sneaking_speed|+30%|1|Easy|Quality of life - cheap
+ATTR_STEP_HEIGHT|AttributeModifier ADD_VALUE|minecraft:step_height|+0.5|2|Easy|Walk up full blocks
+ATTR_SAFE_FALL_DISTANCE|AttributeModifier ADD_VALUE|minecraft:safe_fall_distance|+3.0|2|Easy|Fall damage starts later
+ATTR_FALL_DAMAGE_MULT|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:fall_damage_multiplier|-25%|2|Easy|Negative value = less damage
+ATTR_OXYGEN_BONUS|AttributeModifier ADD_VALUE|minecraft:oxygen_bonus|+2.0|2|Easy|Longer breath underwater
+ATTR_BURNING_TIME|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:burning_time|-50%|2|Easy|Shorter time on fire
+ATTR_EXPLOSION_KB_RESIST|AttributeModifier ADD_VALUE|minecraft:explosion_knockback_resistance|+0.5|2|Easy|Creeper/TNT knockback only - not damage
+ATTR_INTERACTION_RANGE|AttributeModifier ADD_VALUE|minecraft:block_interaction_range / entity_interaction_range|+1.0|3|Easy|Very noticeable in PvP - gate behind high rarity
+ATTR_JUMP_STRENGTH|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:jump_strength|+10%|3|Easy|Pair with safe_fall_distance or players die to it
+ATTR_MAX_ABSORPTION|AttributeModifier ADD_VALUE|minecraft:max_absorption|+4.0|4|Medium|Needs a refill source or it does nothing
+ATTR_WATER_MOVE_EFF|AttributeModifier ADD_VALUE|minecraft:water_movement_efficiency|+0.5|2|Easy|Depth Strider equivalent
+ATTR_GRAVITY|AttributeModifier ADD_MULTIPLIED_TOTAL|minecraft:gravity|-10%|3|Medium|Feels odd - test heavily before shipping
+DMG_VS_TYPE|Damage event - check target entity type tag|n/a|+15% vs undead|4|Medium|NeoForge LivingIncomingDamageEvent. Use entity type TAGS not hardcoded types
+DMG_RESIST_FROM_TYPE|Damage event - check source entity type|n/a|-20% from creepers|4|Medium|Also match DamageSource types for explosion/fire/projectile
+DMG_VS_DAMAGE_SOURCE|Damage event - check DamageSource tag|n/a|-30% explosion damage|3|Medium|Cleaner than entity checks for environmental damage
+TOOL_TIER_HAND|Break-speed event + correct-tool-for-drops event|n/a|Bare hand counts as stone tier|5|Hard|TWO hooks. Speed alone still drops nothing - you must also override the drop check
+TOOL_PROFICIENCY|Break-speed event scoped to a tool tag|n/a|+25% speed with axes|3|Medium|Scope by item tag so modded tools benefit too
+POTION_DURATION_MULT|Effect-added event - rebuild the MobEffectInstance|n/a|+25% duration|4|Medium|Only extend beneficial effects. Watch for infinite re-application loops
+POTION_AMPLIFIER_BOOST|Effect-added event|n/a|+1 amplifier on self-brewed potions|6|Hard|Amplifier jumps are huge. Restrict to specific effects
+XP_MULT|XP pickup / drop event|n/a|+20% XP|2|Easy|Popular and safe
+PASSIVE_EFFECT|Re-apply a hidden MobEffectInstance every 40 ticks|n/a|Night Vision while below y=0|3|Medium|Use ambient+hidden particles or it looks terrible
+ON_KILL_PROC|Death event|n/a|10% chance to restore 1 heart on kill|4|Medium|Add an internal cooldown
+ON_HURT_PROC|Damage event|n/a|Below 30% HP gain Strength I for 5s|5|Medium|Cooldown mandatory
+ON_MINE_PROC|Block break event|n/a|3% chance to double ore drops|5|Medium|Respect Silk Touch and fortune. Do not double-fire on multi-block breaks
+LOOT_LUCK_CONTEXT|Loot context modifier|n/a|+1 effective luck on chest loot|4|Hard|Requires a global loot modifier
+CUSTOM|Bespoke code|n/a|Varies|Varies|Hard|Reserve for Legendary/Mythic only - each one is a maintenance burden
+|||||||
+IMPORTANT|Attribute IDs above are from the 1.21.x-26.x line. Print the full attribute registry in-game once your dev env is running and correct any that moved or were renamed in 26.2.||||||
+IMPORTANT|Every attribute modifier needs a STABLE unique ResourceLocation id per title per attribute. Reusing one id across two titles makes the second silently overwrite the first.||||||
+IMPORTANT|Always remove modifiers on unequip AND on player logout-save. Orphaned max_health modifiers are the classic way this kind of mod corrupts a save.||||||
