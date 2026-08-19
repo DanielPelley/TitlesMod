@@ -1,6 +1,7 @@
-<title>Titles — Design Reference</title>
+<title>Title Records</title>
 
-<script type="text/plain" id="titles-src">ID|Display Name|Category|Rarity|Scarcity|Max Holders|Secret|Hint|How to Obtain|Progress Source|Effect Summary|Effect Types|Magnitude|Power Budget|Impl Complexity|Status|Flavor Text
+<script type="text/plain" id="titles-src">
+ID|Display Name|Category|Rarity|Scarcity|Max Holders|Secret|Hint|How to Obtain|Progress Source|Effect Summary|Effect Types|Magnitude|Power Budget|Impl Complexity|Status|Flavor Text
 novice|Novice|Starter|Common|Unlimited|-|No|-|Granted on first join if the random roll gives nothing better|First-join grant|Small all-round nudge for new characters|ATTR_MAX_HEALTH|+2.0 max health|2|Easy|Planned|Everyone starts somewhere.
 wanderer|Wanderer|Starter|Common|Unlimited|-|No|-|Possible random starter title|First-join grant|Slightly faster on foot|ATTR_MOVEMENT_SPEED|+4%|2|Easy|Planned|The road was there before you were.
 tinkerer|Tinkerer|Starter|Common|Unlimited|-|No|-|Possible random starter title|First-join grant|Tools last a little longer|CUSTOM|-10% durability consumption|2|Medium|Planned|Fix it twice and it never breaks.
@@ -103,10 +104,16 @@ pacifist|Pacifist|Meta|Legendary|Limited|3|Yes|Fifteen days is a long time to ke
 the_hollow|The Hollow|Secret|Epic|Unlimited|-|Yes|The respawn screen knows you by name.|Die 100 times|Vanilla stat DEATHS|Death costs less|CUSTOM|Keep 50% of XP on death and respawn with Absorption|7|Medium|Planned|You know the way back now.
 moonstruck|Moonstruck|Secret|Rare|Unlimited|-|Yes|The moon keeps a ledger of quiet nights.|Sleep through 25 nights without ever sleeping through a thunderstorm|Sleep event with weather check|Stronger at night|ATTR_ATTACK_DAMAGE|+15% damage between dusk and dawn|6|Medium|Planned|The moon has opinions about you.
 the_drowned_king|The Drowned King|Secret|Unique|Unique|1|Yes|The temple has a throne. Its rules are drowning ones.|Kill an Elder Guardian while under Mining Fatigue III and drowning|Compound condition on kill event|SIGNATURE - permanent water breathing. Utility not combat power.|CUSTOM ATTR_WATER_MOVE_EFF|Water breathing and +50% swim speed|4 exempt|Hard|Planned|The temple has a new tenant.
-warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps letting you go.|Escape a Warden after it has fully aggroed on you 10 times|Warden aggro/escape tracker|SIGNATURE - sculk sensors and shriekers never detect you|CUSTOM|Sculk immunity and +15% damage from stealth|4 exempt|Hard|Planned|It let you go. Nine times you thought that was luck.</script>
+warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps letting you go.|Escape a Warden after it has fully aggroed on you 10 times|Warden aggro/escape tracker|SIGNATURE - sculk sensors and shriekers never detect you|CUSTOM|Sculk immunity and +15% damage from stealth|4 exempt|Hard|Planned|It let you go. Nine times you thought that was luck.
+</script>
+
+<script type="text/plain" id="tweaks-src">
+Title ID|Display Name|Field|Concern|Options On The Table|Status|Added
+vein_seeker|Vein Seeker|-|Flagged for a rethink - reason not written down yet|-|Undecided|2026-08-11
+</script>
 
 <style>
-  /* ---- tokens: deepslate ground, lapis accent, canon MC rarity colors ---- */
+  /* ---- tokens: shared with titles-reference.html (deepslate ground, lapis accent) ---- */
   :root {
     --bg:        #EAECF0;
     --surface:   #FBFCFD;
@@ -119,6 +126,10 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
     --accent:    #2F4FB8;
     --accent-ink:#FFFFFF;
     --accent-wash:#E3E9FA;
+
+    /* unresolved-decision marker — deliberately not a rarity hue */
+    --flag:      #A34A16;
+    --flag-wash: #A34A1614;
 
     --r-common:    #666B73;
     --r-uncommon:  #23703A;
@@ -144,7 +155,7 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --bg:        #101216;
       --surface:   #191C22;
       --surface-2: #1F232B;
@@ -156,6 +167,9 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
       --accent:    #7C9BF0;
       --accent-ink:#0D1017;
       --accent-wash:#7c9bf01f;
+
+      --flag:      #F0955A;
+      --flag-wash: #F0955A1c;
 
       --r-common:    #A9AEB6;
       --r-uncommon:  #5FE06D;
@@ -176,20 +190,11 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
       --shadow: 0 1px 2px #00000040, 0 10px 30px #00000038;
     }
   }
-
-  :root[data-theme="light"] {
-    --bg:#EAECF0; --surface:#FBFCFD; --surface-2:#F1F3F6; --line:#D3D8E0; --line-soft:#E2E6EC;
-    --ink:#171A20; --ink-2:#4E5563; --ink-3:#7C8492;
-    --accent:#2F4FB8; --accent-ink:#FFFFFF; --accent-wash:#E3E9FA;
-    --r-common:#666B73; --r-uncommon:#23703A; --r-rare:#0E6675; --r-epic:#8E2794; --r-legendary:#8A5600; --r-mythic:#A82424;
-    --r-unique:#0B7565; --r-unique-ink:#FFFFFF;
-    --r-common-bg:#666B7318; --r-uncommon-bg:#23703A18; --r-rare-bg:#0E667518; --r-epic-bg:#8E279418; --r-legendary-bg:#8A560018; --r-mythic-bg:#A8242418;
-    --shadow: 0 1px 2px #171a2010, 0 8px 24px #171a200d;
-  }
   :root[data-theme="dark"] {
     --bg:#101216; --surface:#191C22; --surface-2:#1F232B; --line:#2E333D; --line-soft:#262B33;
     --ink:#E5E8EE; --ink-2:#A0A8B6; --ink-3:#737C8B;
     --accent:#7C9BF0; --accent-ink:#0D1017; --accent-wash:#7c9bf01f;
+    --flag:#F0955A; --flag-wash:#F0955A1c;
     --r-common:#A9AEB6; --r-uncommon:#5FE06D; --r-rare:#5AE0E8; --r-epic:#EC85EC; --r-legendary:#F2AC2E; --r-mythic:#FF6E6E;
     --r-unique:#3FDBB4; --r-unique-ink:#08221D;
     --r-common-bg:#A9AEB61c; --r-uncommon-bg:#5FE06D1c; --r-rare-bg:#5AE0E81c; --r-epic-bg:#EC85EC1c; --r-legendary-bg:#F2AC2E1c; --r-mythic-bg:#FF6E6E1c;
@@ -206,12 +211,12 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   }
 
   .wrap {
-    max-width: 1340px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 40px 24px 96px;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 26px;
   }
 
   /* ---- masthead ---- */
@@ -231,22 +236,23 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
     text-wrap: balance;
     margin: 0;
   }
-  .standfirst { color: var(--ink-2); max-width: 66ch; }
+  .standfirst { color: var(--ink-2); max-width: 66ch; margin: 0; }
+  .standfirst code { font-family: var(--f-mono); font-size: 13px; }
 
   /* ---- summary strip ---- */
   .summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1px;
     background: var(--line-soft);
     border: 1px solid var(--line);
     border-radius: 10px;
     overflow: hidden;
   }
-  .stat { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .stat { background: var(--surface); padding: 13px 16px; display: flex; flex-direction: column; gap: 3px; }
   .stat b {
     font-family: var(--f-mono);
-    font-size: 24px;
+    font-size: 23px;
     font-weight: 600;
     letter-spacing: -.02em;
     font-variant-numeric: tabular-nums;
@@ -254,22 +260,13 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   }
   .stat span { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 
-  /* ---- rarity ladder bar ---- */
-  .ladder { display: flex; flex-direction: column; gap: 8px; }
-  .ladder-bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line-soft); }
-  .ladder-bar i { display: block; }
-  .ladder-key { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); }
-  .ladder-key span { display: inline-flex; align-items: center; gap: 6px; }
-  .ladder-key em { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
-  .ladder-key b { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
-
   /* ---- controls ---- */
   .controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    padding: 14px 16px;
+    padding: 13px 16px;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 10px;
@@ -280,7 +277,7 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   }
   .search {
     flex: 1 1 240px;
-    min-width: 200px;
+    min-width: 190px;
     font: inherit;
     color: var(--ink);
     background: var(--surface-2);
@@ -320,51 +317,106 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   .chip.r-Mythic[aria-pressed="true"]    { color: var(--r-mythic);    background: var(--r-mythic-bg); }
   .chip.r-Unique[aria-pressed="true"]    { color: var(--r-unique-ink); background: var(--r-unique); border-color: var(--r-unique); }
   .chip.flag[aria-pressed="true"] { color: var(--accent); background: var(--accent-wash); border-color: var(--accent); }
+  .chip.tweak[aria-pressed="true"] { color: var(--flag); background: var(--flag-wash); border-color: var(--flag); }
   .count { margin-left: auto; font-family: var(--f-mono); font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 
-  :is(button, select, input, [tabindex]):focus-visible {
+  :is(button, select, input, summary, [tabindex]):focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
-  /* ---- table ---- */
-  .tablecard {
+  /* ---- category jump rail ---- */
+  .rail { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+  .rail a {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 10px;
+  }
+  .rail a:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-wash); }
+  .rail a b { font-weight: 600; color: var(--ink-3); margin-left: 5px; font-variant-numeric: tabular-nums; }
+
+  /* ---- category section ---- */
+  .cat { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 78px; }
+  .cathead { display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .cathead h2 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.015em; }
+  .cathead .n { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .cathead .pts { margin-left: auto; font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+
+  /* ---- one record ---- */
+  .rec {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    scroll-margin-top: 78px;
   }
-  .scroller { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; min-width: 900px; }
-  thead th {
-    position: sticky;
-    top: 0;
-    background: var(--surface-2);
-    text-align: left;
-    font-size: 11px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-weight: 600;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--line);
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-  }
-  thead th .arw { opacity: 0; margin-left: 4px; }
-  thead th[data-dir] { color: var(--ink); }
-  thead th[data-dir] .arw { opacity: 1; }
-  tbody td { padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; font-size: 13.5px; }
-  .row { cursor: pointer; }
-  .row:hover td { background: var(--accent-wash); }
-  .row.open td { background: var(--accent-wash); }
+  .rec.secret { border-left: 3px solid var(--accent); }
+  .rec.flagged { border-color: var(--flag); box-shadow: 0 0 0 1px var(--flag), var(--shadow); }
+  .rec.unique .rechead { background: linear-gradient(90deg, color-mix(in srgb, var(--r-unique) 12%, var(--surface-2)), var(--surface-2) 70%); }
 
-  .tname { display: flex; flex-direction: column; gap: 1px; min-width: 150px; }
-  .tname b { font-weight: 600; font-size: 14px; letter-spacing: -.005em; }
-  .tname code { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
-  .lock { color: var(--accent); font-size: 11px; }
+  /* ---- tweak queue ---- */
+  .queue {
+    background: var(--surface);
+    border: 1px solid var(--flag);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .queue h2 {
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    font-family: var(--f-mono);
+    color: var(--flag);
+    background: var(--flag-wash);
+    border-bottom: 1px solid var(--flag);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .queue h2 span { margin-left: auto; color: var(--ink-3); font-weight: 500; letter-spacing: .04em; text-transform: none; }
+  .queue table { border-collapse: collapse; width: 100%; }
+  .queue th { text-align: left; font-size: 10.5px; font-family: var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; padding: 8px 16px; border-bottom: 1px solid var(--line-soft); }
+  .queue td { padding: 9px 16px; border-bottom: 1px solid var(--line-soft); font-size: 13.5px; vertical-align: top; }
+  .queue tr:last-child td { border-bottom: 0; }
+  .queue a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .queue a:hover { text-decoration: underline; }
+  .queue .st { font-family: var(--f-mono); font-size: 11.5px; color: var(--flag); white-space: nowrap; }
+  .queue .none { padding: 14px 16px; color: var(--ink-3); font-size: 13.5px; }
+  .queue .none code { font-family: var(--f-mono); font-size: 12px; }
+  .queue td.dim { color: var(--ink-3); }
+  .queue td em { font-style: normal; color: var(--ink-3); }
+
+  .rechead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    padding: 13px 16px 12px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .rechead h3 { margin: 0; font-size: 16.5px; font-weight: 600; letter-spacing: -.01em; }
+  .rechead code { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-3); }
+  .rechead .spacer { flex: 1 1 auto; }
 
   .pill {
     display: inline-block;
@@ -384,30 +436,32 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   .p-Mythic    { color: var(--r-mythic);    background: var(--r-mythic-bg); }
   /* Unique is the only solid pill — it must never be mistaken for Rare's teal */
   .p-Unique    { color: var(--r-unique-ink); background: var(--r-unique); font-weight: 600; }
-  .scarce { color: var(--accent); background: var(--accent-wash); }
-  .unl { color: var(--ink-3); font-family: var(--f-mono); font-size: 11.5px; }
+  .pill.scarce { color: var(--accent); background: var(--accent-wash); }
+  .pill.budget { color: var(--ink); background: transparent; border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .pill.budget s { text-decoration: none; color: var(--accent); }
+  .pill.flagged { color: var(--flag); background: var(--flag-wash); }
 
-  .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .num s { text-decoration: none; color: var(--accent); font-size: 10.5px; letter-spacing: .04em; }
-  .cx { font-family: var(--f-mono); font-size: 11.5px; }
-  .cx-Easy { color: var(--r-uncommon); }
-  .cx-Medium { color: var(--ink-2); }
-  .cx-Hard { color: var(--r-legendary); }
-  .obtain { max-width: 34ch; color: var(--ink-2); }
-  .mag { max-width: 30ch; }
-
-  /* ---- expansion ---- */
-  .detail td { background: var(--surface-2); padding: 0; border-bottom: 1px solid var(--line); }
-  .detail-inner {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 18px 28px;
-    padding: 18px 20px 20px 20px;
+  /* ---- the record table ---- */
+  .fields { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  .fields th, .fields td { text-align: left; vertical-align: top; padding: 8px 16px; border-bottom: 1px solid var(--line-soft); }
+  .fields tr:last-child th, .fields tr:last-child td { border-bottom: 0; }
+  .fields th {
+    width: 132px;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 10px;
+    white-space: nowrap;
   }
-  .field { display: flex; flex-direction: column; gap: 4px; }
-  .field span { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
-  .field p { margin: 0; font-size: 13.5px; }
-  .field .mono { font-family: var(--f-mono); font-size: 12px; }
+  .fields td { font-size: 13.5px; overflow-wrap: anywhere; }
+  .fields tr.hi td { background: var(--accent-wash); }
+  .fields td.mono { font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .fields td.dim { color: var(--ink-3); }
+  .fields td em { font-style: normal; color: var(--ink-3); }
+
   .etypes { display: flex; flex-wrap: wrap; gap: 4px; }
   .etype {
     font-family: var(--f-mono);
@@ -416,101 +470,91 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
     border-radius: 3px;
     border: 1px solid var(--line);
     color: var(--ink-2);
+    white-space: nowrap;
   }
+  .cx-Easy { color: var(--r-uncommon); }
+  .cx-Medium { color: var(--ink-2); }
+  .cx-Hard { color: var(--r-legendary); }
+
   .flavor {
-    grid-column: 1 / -1;
     font-family: var(--f-prose);
     font-style: italic;
-    font-size: 16px;
+    font-size: 15px;
     color: var(--ink-2);
-    border-left: 2px solid var(--accent);
-    padding-left: 14px;
     margin: 0;
-    max-width: 62ch;
+    padding: 12px 16px 14px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--line-soft);
   }
-  .hint {
-    grid-column: 1 / -1;
-    font-family: var(--f-prose);
-    font-style: italic;
-    font-size: 14.5px;
+
+  .rawline {
+    border-top: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+  .rawline summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rawline summary::-webkit-details-marker { display: none; }
+  .rawline summary:hover { color: var(--accent); }
+  .rawline summary .cp {
+    margin-left: auto;
+    font: inherit;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+  .rawline pre {
+    margin: 0;
+    padding: 0 16px 12px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    line-height: 1.6;
     color: var(--ink-2);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: all;
   }
-  .hint b { font-family: var(--f-mono); font-style: normal; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 3px; }
 
-  .empty { padding: 40px 20px; text-align: center; color: var(--ink-3); }
-
-  /* ---- reference sections ---- */
-  h2 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -.015em;
-    margin: 0 0 2px 0;
-  }
-  .section { display: flex; flex-direction: column; gap: 14px; }
-  .section > p { margin: 0; color: var(--ink-2); max-width: 68ch; }
-  .refgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 16px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .card h3 { margin: 0; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-  .kv { display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
-  .kv div { display: flex; justify-content: space-between; gap: 14px; }
-  .kv dt { color: var(--ink-3); }
-  .kv dd { margin: 0; font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; }
-  .card > p { margin: 0; font-size: 13px; color: var(--ink-2); }
-
-  .rule {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    padding: 12px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .rule b { font-size: 13.5px; }
-  .rule p { margin: 0; font-size: 13px; color: var(--ink-2); }
-  .rule .val { font-family: var(--f-mono); color: var(--accent); font-size: 12.5px; }
-
-  .caps { columns: 2 220px; column-gap: 28px; font-size: 13px; }
-  .caps div { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px solid var(--line-soft); break-inside: avoid; }
-  .caps dt { color: var(--ink-2); font-family: var(--f-mono); font-size: 12px; }
-  .caps dd { margin: 0; font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .empty { padding: 48px 20px; text-align: center; color: var(--ink-3); border: 1px dashed var(--line); border-radius: 10px; }
 
   footer { color: var(--ink-3); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 16px; }
   footer code { font-family: var(--f-mono); }
 
   @media (prefers-reduced-motion: no-preference) {
-    .row td, .chip { transition: background-color .12s ease, color .12s ease, border-color .12s ease; }
+    .chip, .rail a, .rawline summary { transition: background-color .12s ease, color .12s ease, border-color .12s ease; }
   }
-  @media (max-width: 640px) {
+  @media (max-width: 700px) {
     .wrap { padding: 28px 14px 64px; }
     .controls { position: static; }
+    .grid { grid-template-columns: 1fr; }
+    .fields th { width: 106px; }
   }
 </style>
 
 <div class="wrap">
 
   <header class="masthead">
-    <div class="eyebrow">Titles Mod · design workbook · sheet 02</div>
-    <h1>The Title Roster</h1>
-    <p class="standfirst">Every title designed so far, with its unlock condition, progress source, effect payload, point cost and implementation difficulty. Click any row to open the full record. Source of truth is <code>design/data/02-Titles.csv</code>.</p>
+    <div class="eyebrow">Titles Mod · design workbook · sheet 02 · record view</div>
+    <h1>Title Records</h1>
+    <p class="standfirst">One table per title — every field of its row laid out for editing. The bottom of each record holds the exact pipe-delimited line from <code>design/data/02-Titles.csv</code>, ready to copy, tweak and paste back. Titles you have parked for a rethink are listed in the tweak queue below and outlined in the roster.</p>
   </header>
 
   <div class="summary" id="summary"></div>
 
-  <div class="ladder">
-    <div class="ladder-bar" id="ladderBar"></div>
-    <div class="ladder-key" id="ladderKey"></div>
-  </div>
+  <section class="queue" id="queue"></section>
 
   <div class="controls">
     <input class="search" id="q" type="search" placeholder="Search names, conditions, effects, flavor…" aria-label="Search titles">
@@ -518,103 +562,17 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
     <div class="chips" id="rarityChips"></div>
     <button class="chip flag" id="fScarce" aria-pressed="false">Scarce only</button>
     <button class="chip flag" id="fSecret" aria-pressed="false">Secret only</button>
+    <button class="chip tweak" id="fTweak" aria-pressed="false">Tweak queue</button>
+    <button class="chip flag" id="fRaw" aria-pressed="false">Show raw rows</button>
     <span class="count" id="count"></span>
   </div>
 
-  <div class="tablecard">
-    <div class="scroller">
-      <table>
-        <thead>
-          <tr id="headRow"></tr>
-        </thead>
-        <tbody id="body"></tbody>
-      </table>
-    </div>
-  </div>
+  <nav class="rail" id="rail" aria-label="Jump to category"></nav>
 
-  <section class="section">
-    <h2>The rarity ladder</h2>
-    <p>Rarity sets three things at once: the point budget a title may spend, how likely it is to be your free first-join roll, and how loudly the client announces it. Hex values are the canon Minecraft chat-format colors from <code>03-Rarity-and-Scarcity.csv</code>; the swatches below show those true values, while the table above shifts them per theme so they stay legible. <b>Unique</b> is the top of the ladder and the one tier with no point range — it is budget-exempt and capped at 5 points of raw stats like every scarce title, so it buys prestige rather than power. It is also the one word that appears in both the Rarity and the Scarcity column: read Scarcity for the holder count, Rarity for the presentation.</p>
-    <div class="refgrid" id="rarityCards"></div>
-  </section>
-
-  <section class="section">
-    <h2>Scarcity types</h2>
-    <p><b>Titles are never revoked.</b> Once earned a title is yours permanently — it survives death, inactivity and dimension change. Contested is the sole exception.</p>
-    <div class="refgrid" id="scarcityCards"></div>
-  </section>
-
-  <section class="section">
-    <h2>Balance rules</h2>
-    <div class="refgrid">
-      <div class="rule"><b>10 equip slots</b><span class="val">hard</span><p>Enough room for a real build identity.</p></div>
-      <div class="rule"><b>40-point budget on equipped titles</b><span class="val">server configurable</span><p>Slots alone are not a limiter — 10 Legendary titles would be ~95 points. The budget is what actually holds the mod together.</p></div>
-      <div class="rule"><b>Scarce titles are budget-exempt</b><span class="val">Unique · Limited · Contested · Founding</span><p>They stack on top of the 10 rather than competing for a slot.</p></div>
-      <div class="rule"><b>Scarce ceiling: 5 points of raw stats each</b><span class="val">the rule that makes exemption safe</span><p>A scarce title earns its rarity through a signature power and public prestige, not big numbers.</p></div>
-      <div class="rule"><b>Signature power, not DPS</b><span class="val">one memorable non-stat ability</span><p>Fall immunity, water breathing, sculk invisibility, a revive. Impressive to have and to watch.</p></div>
-      <div class="rule"><b>Per-attribute hard caps</b><span class="val">second safety net</span><p>Even inside 40 points a player could dump everything into one attribute.</p></div>
-    </div>
-
-    <div class="card">
-      <h3>Sample builds at the cap</h3>
-      <dl class="kv">
-        <div><dt>Broad generalist — 10 Common/Uncommon</dt><dd>~25</dd></div>
-        <div><dt>Balanced mid-game — 4 Rare + 4 Uncommon + 2 Common</dt><dd>~39</dd></div>
-        <div><dt>Specialist — 4 Legendary, six slots empty</dt><dd>~38</dd></div>
-        <div><dt>Hybrid endgame — 2 Legendary + 3 Rare + 5 Common</dt><dd>~42 refused</dd></div>
-        <div><dt>Endgame veteran — 40 equipped + 6 scarce</dt><dd>62 effective</dd></div>
-      </dl>
-    </div>
-
-    <div class="card">
-      <h3>Per-attribute hard caps from titles</h3>
-      <dl class="caps">
-        <div><dt>max_health</dt><dd>+10.0</dd></div>
-        <div><dt>armor</dt><dd>+4.0</dd></div>
-        <div><dt>armor_toughness</dt><dd>+4.0</dd></div>
-        <div><dt>knockback_resistance</dt><dd>+0.4</dd></div>
-        <div><dt>attack_damage</dt><dd>+25%</dd></div>
-        <div><dt>attack_speed</dt><dd>+15%</dd></div>
-        <div><dt>movement_speed</dt><dd>+15%</dd></div>
-        <div><dt>jump_strength</dt><dd>+15%</dd></div>
-        <div><dt>luck</dt><dd>+4.0</dd></div>
-        <div><dt>block_break_speed</dt><dd>+40%</dd></div>
-        <div><dt>mining_efficiency</dt><dd>+5.0</dd></div>
-        <div><dt>interaction_range</dt><dd>+2.0</dd></div>
-        <div><dt>dmg vs type (per tag)</dt><dd>+30%</dd></div>
-        <div><dt>dmg resist (all sources)</dt><dd>−40%</dd></div>
-        <div><dt>potion duration</dt><dd>+50%</dd></div>
-        <div><dt>xp gain</dt><dd>+50%</dd></div>
-        <div><dt>fall damage reduction</dt><dd>−60%</dd></div>
-      </dl>
-      <p>Clamp at modifier-application time, after summing every equipped and scarce contribution. Enforce the budget in the equip handler on the server — never trust the client.</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>Effect types in use</h2>
-    <p>Point cost and implementation difficulty per hook, from the Effect Catalog sheet. The count is how many titles in the roster above reach for each one.</p>
-    <div class="tablecard">
-      <div class="scroller">
-        <table>
-          <thead>
-            <tr>
-              <th style="cursor:default">Effect type</th>
-              <th style="cursor:default">Hook</th>
-              <th style="cursor:default">Attribute ID</th>
-              <th style="cursor:default">Cost</th>
-              <th style="cursor:default">Difficulty</th>
-              <th style="cursor:default">Used by</th>
-            </tr>
-          </thead>
-          <tbody id="effectBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+  <div id="records"></div>
 
   <footer>
-    <p>Generated from <code>design/data/02-Titles.csv</code>, <code>03-Rarity-and-Scarcity.csv</code>, <code>04-Effect-Catalog.csv</code> and <code>10-Balance-Model.csv</code>. Target platform: Minecraft 26.1 · NeoForge 26.1.2.93 · JDK 25 · Mojang official mappings. Status: design phase, no code yet.</p>
+    <p>Generated from <code>design/data/02-Titles.csv</code>. Field order matches the sheet header. Edit the CSV, then run <code>.\design\build-workbook.ps1</code> to regenerate the workbook.</p>
   </footer>
 </div>
 
@@ -625,303 +583,270 @@ warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps
   /* ---------- parse the pipe-delimited source sheet ---------- */
   var raw = document.getElementById("titles-src").textContent.trim();
   var lines = raw.split(/\r?\n/).filter(function (l) { return l.trim().length && l.indexOf("|") > -1; });
-  var head = lines[0].split("|");
+  var HEAD = lines[0].split("|");
   var TITLES = lines.slice(1).map(function (line) {
-    var cells = line.split("|");
-    var o = {};
-    head.forEach(function (h, i) { o[h] = (cells[i] || "").trim(); });
-    o._budget = parseInt(o["Power Budget"], 10);
-    if (isNaN(o._budget)) o._budget = 0;
-    o._exempt = /exempt/i.test(o["Power Budget"]);
-    o._scarce = o["Scarcity"] !== "Unlimited";
-    o._secret = o["Secret"] === "Yes";
-    o._blob = Object.keys(o).map(function (k) { return k.charAt(0) === "_" ? "" : o[k]; }).join(" ").toLowerCase();
+    var c = line.split("|");
+    var o = { _raw: line };
+    HEAD.forEach(function (h, i) { o[h] = (c[i] || "").trim(); });
     return o;
   });
 
-  var RARITIES = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Unique"];
-  var RARITY_META = {
-    Common:    { hex: "AAAAAA", fmt: "gray",         roll: "50", budget: "1–4",   effort: "Minutes to an hour of normal play", ui: "Plain text" },
-    Uncommon:  { hex: "55FF55", fmt: "green",        roll: "28", budget: "3–4",   effort: "A full session of focused play",    ui: "Plain text" },
-    Rare:      { hex: "55FFFF", fmt: "aqua",         roll: "14", budget: "5–6",   effort: "Several sessions or a boss/structure", ui: "Subtle shimmer on hover" },
-    Epic:      { hex: "FF55FF", fmt: "light_purple", roll: "6",  budget: "7–8",   effort: "Long-term grind or a hard challenge", ui: "Animated gradient border" },
-    Legendary: { hex: "FFAA00", fmt: "gold",         roll: "2",  budget: "9–10",  effort: "Server-notable achievement",        ui: "Full-card glow + server broadcast" },
-    Mythic:    { hex: "FF5555", fmt: "red",          roll: "0",  budget: "11–13", effort: "Once-per-world class event",        ui: "Screen flash + title card + broadcast" },
-    Unique:    { hex: "00AAAA", fmt: "dark_aqua",    roll: "0",  budget: "5 exempt", effort: "A one-of-a-kind world event or a closed founder race", ui: "Solid teal nameplate + title card + broadcast + a numbered ledger entry" }
-  };
-  var SCARCITY = [
-    { name: "Unlimited", holders: "unbounded", use: "Default for 90% of titles", note: "Anyone who meets the condition gets it. Kept through death, inactivity and server reset." },
-    { name: "Limited",   holders: "2–10",      use: "Prestige grind titles",     note: "Only N players may hold it at once. An inactive holder keeps the slot forever — never released. Released only on server reset." },
-    { name: "Unique",    holders: "1",         use: "First-to-do-X achievements", note: "Exactly one holder for the life of the world. Released only on server reset." },
-    { name: "Founding",  holders: "10–50",     use: "Founder titles and first-N races", note: "The first N players ever to meet the condition claim it, then it closes forever. Not a rotating pool — being early is a historical fact and cannot be taken back." },
-    { name: "Contested", holders: "1",         use: "The Unrivaled alone",       note: "THE ONLY REVOCABLE TYPE. Unique but transferable — lost only when another player beats the holder's score. Never on death, never on inactivity." }
-  ];
-  var EFFECT_CATALOG = [
-    ["ATTR_MAX_HEALTH","AttributeModifier ADD_VALUE","minecraft:max_health","4","Easy"],
-    ["ATTR_ARMOR","AttributeModifier ADD_VALUE","minecraft:armor","3","Easy"],
-    ["ATTR_ARMOR_TOUGHNESS","AttributeModifier ADD_VALUE","minecraft:armor_toughness","3","Easy"],
-    ["ATTR_KNOCKBACK_RESIST","AttributeModifier ADD_VALUE","minecraft:knockback_resistance","2","Easy"],
-    ["ATTR_ATTACK_DAMAGE","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:attack_damage","4","Easy"],
-    ["ATTR_ATTACK_SPEED","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:attack_speed","4","Easy"],
-    ["ATTR_MOVEMENT_SPEED","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:movement_speed","3","Easy"],
-    ["ATTR_LUCK","AttributeModifier ADD_VALUE","minecraft:luck","3","Easy"],
-    ["ATTR_BLOCK_BREAK_SPEED","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:block_break_speed","3","Easy"],
-    ["ATTR_MINING_EFFICIENCY","AttributeModifier ADD_VALUE","minecraft:mining_efficiency","3","Easy"],
-    ["ATTR_SUBMERGED_MINING","AttributeModifier ADD_VALUE","minecraft:submerged_mining_speed","1","Easy"],
-    ["ATTR_SNEAKING_SPEED","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:sneaking_speed","1","Easy"],
-    ["ATTR_STEP_HEIGHT","AttributeModifier ADD_VALUE","minecraft:step_height","2","Easy"],
-    ["ATTR_SAFE_FALL_DISTANCE","AttributeModifier ADD_VALUE","minecraft:safe_fall_distance","2","Easy"],
-    ["ATTR_FALL_DAMAGE_MULT","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:fall_damage_multiplier","2","Easy"],
-    ["ATTR_OXYGEN_BONUS","AttributeModifier ADD_VALUE","minecraft:oxygen_bonus","2","Easy"],
-    ["ATTR_BURNING_TIME","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:burning_time","2","Easy"],
-    ["ATTR_EXPLOSION_KB_RESIST","AttributeModifier ADD_VALUE","minecraft:explosion_knockback_resistance","2","Easy"],
-    ["ATTR_INTERACTION_RANGE","AttributeModifier ADD_VALUE","minecraft:block/entity_interaction_range","3","Easy"],
-    ["ATTR_JUMP_STRENGTH","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:jump_strength","3","Easy"],
-    ["ATTR_MAX_ABSORPTION","AttributeModifier ADD_VALUE","minecraft:max_absorption","4","Medium"],
-    ["ATTR_WATER_MOVE_EFF","AttributeModifier ADD_VALUE","minecraft:water_movement_efficiency","2","Easy"],
-    ["ATTR_GRAVITY","AttributeModifier ADD_MULTIPLIED_TOTAL","minecraft:gravity","3","Medium"],
-    ["ATTR_TEMPT_RANGE","AttributeModifier ADD_VALUE","minecraft:tempt_range","2","Easy"],
-    ["DMG_VS_TYPE","Damage event — target entity type tag","n/a","4","Medium"],
-    ["DMG_RESIST_FROM_TYPE","Damage event — source entity type","n/a","4","Medium"],
-    ["DMG_VS_DAMAGE_SOURCE","Damage event — DamageSource tag","n/a","3","Medium"],
-    ["TOOL_TIER_HAND","Break-speed event + correct-tool-for-drops event","n/a","5","Hard"],
-    ["TOOL_PROFICIENCY","Break-speed event scoped to a tool tag","n/a","3","Medium"],
-    ["POTION_DURATION_MULT","Effect-added event — rebuild the MobEffectInstance","n/a","4","Medium"],
-    ["POTION_AMPLIFIER_BOOST","Effect-added event","n/a","6","Hard"],
-    ["XP_MULT","XP pickup / drop event","n/a","2","Easy"],
-    ["PASSIVE_EFFECT","Re-apply a hidden MobEffectInstance every 40 ticks","n/a","3","Medium"],
-    ["ON_KILL_PROC","Death event","n/a","4","Medium"],
-    ["ON_HURT_PROC","Damage event","n/a","5","Medium"],
-    ["ON_MINE_PROC","Block break event","n/a","5","Medium"],
-    ["LOOT_LUCK_CONTEXT","Loot context modifier","n/a","4","Hard"],
-    ["ENCHANT_INTRINSIC","Attack event — enchantment effect without the enchantment","n/a","4","Medium"],
-    ["ACTIVE_ABILITY","Keybind/use event + server-side cooldown","n/a","6","Hard"],
-    ["CUSTOM","Bespoke code — Legendary/Mythic only","n/a","varies","Hard"]
-  ];
-
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+  /* ---------- the tweak queue: titles flagged for a rethink ---------- */
+  var TWEAKS = (function () {
+    var el = document.getElementById("tweaks-src");
+    if (!el) return {};
+    var ls = el.textContent.trim().split(/\r?\n/).filter(function (l) { return l.trim().length && l.indexOf("|") > -1; });
+    if (ls.length < 2) return {};
+    var th = ls[0].split("|");
+    var byId = {};
+    ls.slice(1).forEach(function (line) {
+      var c = line.split("|"), o = {};
+      th.forEach(function (h, i) { o[h] = (c[i] || "").trim(); });
+      if (o["Title ID"]) byId[o["Title ID"]] = o;
     });
+    return byId;
+  })();
+  function flagged(t) { return Object.prototype.hasOwnProperty.call(TWEAKS, t.ID); }
+
+  var RARITIES = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Unique"];
+  var CATS = [];
+  TITLES.forEach(function (t) { if (CATS.indexOf(t.Category) === -1) CATS.push(t.Category); });
+
+  function isScarce(t) { return t.Scarcity && t.Scarcity !== "Unlimited"; }
+  function isSecret(t) { return t.Secret === "Yes"; }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
-  function el(id) { return document.getElementById(id); }
+  function blank(v) { return !v || v === "-" || v === "—"; }
+  function val(v) { return blank(v) ? '<em>—</em>' : esc(v); }
 
-  /* ---------- summary ---------- */
-  var cats = {}, cx = { Easy: 0, Medium: 0, Hard: 0 }, rarityCount = {};
-  TITLES.forEach(function (t) {
-    cats[t.Category] = (cats[t.Category] || 0) + 1;
-    if (cx[t["Impl Complexity"]] !== undefined) cx[t["Impl Complexity"]]++;
-    rarityCount[t.Rarity] = (rarityCount[t.Rarity] || 0) + 1;
-  });
-  var scarceCount = TITLES.filter(function (t) { return t._scarce; }).length;
-  var secretCount = TITLES.filter(function (t) { return t._secret; }).length;
-  var proposed = TITLES.filter(function (t) { return t.Status !== "Planned"; }).length;
+  /* ---------- summary strip ---------- */
+  (function () {
+    var pts = TITLES.reduce(function (a, t) { return a + (parseFloat(t["Power Budget"]) || 0); }, 0);
+    var hard = TITLES.filter(function (t) { return t["Impl Complexity"] === "Hard"; }).length;
+    var cells = [
+      [TITLES.length, "titles"],
+      [CATS.length, "categories"],
+      [TITLES.filter(isScarce).length, "scarce"],
+      [TITLES.filter(isSecret).length, "secret"],
+      [hard, "hard to build"],
+      [TITLES.filter(function (t) { return t.Rarity === "Unique"; }).length, "unique"],
+      [pts, "points total"],
+      [TITLES.filter(flagged).length, "in tweak queue"]
+    ];
+    document.getElementById("summary").innerHTML = cells.map(function (c) {
+      return '<div class="stat"><b>' + c[0] + "</b><span>" + c[1] + "</span></div>";
+    }).join("");
+  })();
 
-  el("summary").innerHTML = [
-    ["Titles designed", TITLES.length],
-    ["Categories", Object.keys(cats).length],
-    ["Scarce (capped holders)", scarceCount],
-    ["Secret", secretCount],
-    ["Easy / Med / Hard", cx.Easy + " / " + cx.Medium + " / " + cx.Hard],
-    ["Still proposed", proposed]
-  ].map(function (s) {
-    return '<div class="stat"><b>' + esc(s[1]) + "</b><span>" + esc(s[0]) + "</span></div>";
-  }).join("");
+  /* ---------- tweak queue panel ---------- */
+  (function () {
+    var host = document.getElementById("queue");
+    var ids = Object.keys(TWEAKS);
+    var head = '<h2>Tweak queue<span>undecided changes — parked here until you settle them</span></h2>';
 
-  el("ladderBar").innerHTML = RARITIES.map(function (r) {
-    var n = rarityCount[r] || 0;
-    return '<i style="width:' + (n / TITLES.length * 100) + "%;background:var(--r-" + r.toLowerCase() + ')"></i>';
-  }).join("");
-  el("ladderKey").innerHTML = RARITIES.map(function (r) {
-    return '<span><em style="background:var(--r-' + r.toLowerCase() + ')"></em>' + r + " <b>" + (rarityCount[r] || 0) + "</b></span>";
-  }).join("");
+    if (!ids.length) {
+      host.innerHTML = head + '<p class="none">Nothing parked. Add a row to <code>design/data/11-Tweak-Queue.csv</code> to flag a title.</p>';
+      return;
+    }
 
-  /* ---------- controls ---------- */
-  var state = { q: "", cat: "", rarity: {}, scarce: false, secret: false, sort: null, dir: 1 };
-
-  el("cat").innerHTML = '<option value="">All categories</option>' +
-    Object.keys(cats).sort().map(function (c) {
-      return '<option value="' + esc(c) + '">' + esc(c) + " (" + cats[c] + ")</option>";
+    var rows = ids.map(function (id) {
+      var q = TWEAKS[id];
+      var t = TITLES.filter(function (x) { return x.ID === id; })[0];
+      var name = t ? t["Display Name"] : (q["Display Name"] || id);
+      return "<tr>" +
+        '<td><a href="#t-' + esc(id) + '">' + esc(name) + "</a></td>" +
+        '<td class="dim">' + val(q.Field) + "</td>" +
+        "<td>" + val(q.Concern) + "</td>" +
+        "<td>" + val(q["Options On The Table"]) + "</td>" +
+        '<td class="st">' + val(q.Status) + "</td>" +
+        '<td class="st" style="color:var(--ink-3)">' + val(q.Added) + "</td>" +
+        "</tr>";
     }).join("");
 
-  el("rarityChips").innerHTML = RARITIES.map(function (r) {
+    host.innerHTML = head +
+      '<div style="overflow-x:auto"><table><thead><tr>' +
+      "<th>Title</th><th>Field</th><th>Concern</th><th>Options</th><th>Status</th><th>Added</th>" +
+      "</tr></thead><tbody>" + rows + "</tbody></table></div>";
+  })();
+
+  /* ---------- controls ---------- */
+  var state = { q: "", cat: "", rarities: {}, scarce: false, secret: false, tweak: false, raw: false };
+
+  var catSel = document.getElementById("cat");
+  catSel.innerHTML = '<option value="">All categories</option>' +
+    CATS.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join("");
+
+  document.getElementById("rarityChips").innerHTML = RARITIES.map(function (r) {
     return '<button class="chip r-' + r + '" data-r="' + r + '" aria-pressed="false">' + r + "</button>";
   }).join("");
 
-  /* ---------- table ---------- */
-  var COLS = [
-    { key: "Display Name", label: "Title", sort: function (t) { return t["Display Name"].toLowerCase(); } },
-    { key: "Category", label: "Category" },
-    { key: "Rarity", label: "Rarity", sort: function (t) { return RARITIES.indexOf(t.Rarity); } },
-    { key: "Scarcity", label: "Scarcity", sort: function (t) { return (t._scarce ? "0" : "1") + t.Scarcity; } },
-    { key: "How to Obtain", label: "How to obtain" },
-    { key: "Magnitude", label: "Effect magnitude" },
-    { key: "Power Budget", label: "Pts", sort: function (t) { return t._budget; } },
-    { key: "Impl Complexity", label: "Build", sort: function (t) { return ["Easy", "Medium", "Hard"].indexOf(t["Impl Complexity"]); } }
-  ];
-
-  el("headRow").innerHTML = COLS.map(function (c, i) {
-    return '<th data-i="' + i + '">' + esc(c.label) + '<span class="arw">↓</span></th>';
-  }).join("");
-
-  function rowHTML(t, i) {
-    var scar = t._scarce
-      ? '<span class="pill scarce">' + esc(t.Scarcity) + (t["Max Holders"] !== "-" ? " · " + esc(t["Max Holders"]) : "") + "</span>"
-      : '<span class="unl">unlimited</span>';
-    return '<tr class="row" data-i="' + i + '" tabindex="0">' +
-      '<td><div class="tname"><b>' + esc(t["Display Name"]) +
-        (t._secret ? ' <span class="lock">◆ secret</span>' : "") +
-        "</b><code>" + esc(t.ID) + "</code></div></td>" +
-      "<td>" + esc(t.Category) + "</td>" +
-      '<td><span class="pill p-' + t.Rarity + '">' + esc(t.Rarity) + "</span></td>" +
-      "<td>" + scar + "</td>" +
-      '<td class="obtain">' + esc(t["How to Obtain"]) + "</td>" +
-      '<td class="mag">' + esc(t.Magnitude) + "</td>" +
-      '<td class="num">' + t._budget + (t._exempt ? ' <s>exempt</s>' : "") + "</td>" +
-      '<td class="cx cx-' + esc(t["Impl Complexity"]) + '">' + esc(t["Impl Complexity"]) + "</td>" +
-      "</tr>";
-  }
-
-  function detailHTML(t) {
-    var types = t["Effect Types"].split(/\s+/).filter(Boolean).map(function (x) {
-      return '<span class="etype">' + esc(x) + "</span>";
-    }).join("");
-    var parts = [
-      '<div class="field"><span>Effect summary</span><p>' + esc(t["Effect Summary"]) + "</p></div>",
-      '<div class="field"><span>Effect types</span><div class="etypes">' + types + "</div></div>",
-      '<div class="field"><span>Progress source</span><p class="mono">' + esc(t["Progress Source"]) + "</p></div>",
-      '<div class="field"><span>Status</span><p>' + esc(t.Status) + " · " + esc(t["Impl Complexity"]) + " to build · " +
-        t._budget + " pts" + (t._exempt ? " (budget-exempt)" : "") + "</p></div>"
-    ];
-    if (t._secret) {
-      parts.push('<div class="hint"><b>In-game hint</b>' + esc(t.Hint) + "</div>");
+  /* ---------- render one record ---------- */
+  function fieldRows(t) {
+    var rows = [];
+    function row(label, html, cls) {
+      rows.push("<tr" + (cls ? ' class="' + cls + '"' : "") + "><th>" + label + "</th><td>" + html + "</td></tr>");
     }
-    parts.push('<p class="flavor">' + esc(t["Flavor Text"]) + "</p>");
-    return '<tr class="detail"><td colspan="' + COLS.length + '"><div class="detail-inner">' + parts.join("") + "</div></td></tr>";
+
+    row("How to obtain", val(t["How to Obtain"]));
+    row("Progress source", '<span class="mono">' + val(t["Progress Source"]) + "</span>");
+    row("Effect", val(t["Effect Summary"]));
+
+    var types = (t["Effect Types"] || "").split(/\s+/).filter(function (s) { return s && s !== "-"; });
+    row("Effect types", types.length
+      ? '<span class="etypes">' + types.map(function (x) { return '<span class="etype">' + esc(x) + "</span>"; }).join("") + "</span>"
+      : "<em>—</em>");
+
+    row("Magnitude", val(t.Magnitude));
+
+    var b = t["Power Budget"] || "";
+    row("Power budget", '<span class="mono">' + esc(b.replace("exempt", "")).trim() +
+      (/exempt/.test(b) ? ' <span style="color:var(--accent)">exempt</span>' : "") + "</span>", "hi");
+
+    row("Complexity", '<span class="mono cx-' + esc(t["Impl Complexity"]) + '">' + val(t["Impl Complexity"]) + "</span>");
+
+    var sc = esc(t.Scarcity || "—");
+    if (!blank(t["Max Holders"])) sc += ' <span style="color:var(--ink-3)">· max ' + esc(t["Max Holders"]) + " holder" + (t["Max Holders"] === "1" ? "" : "s") + "</span>";
+    row("Scarcity", '<span class="mono">' + sc + "</span>");
+
+    row("Secret", isSecret(t)
+      ? '<span class="mono" style="color:var(--accent)">Yes</span>'
+      : '<span class="mono dim">No</span>');
+
+    if (!blank(t.Hint)) row("Hint", '<span style="font-family:var(--f-prose);font-style:italic">' + esc(t.Hint) + "</span>");
+
+    row("Status", '<span class="mono">' + val(t.Status) + "</span>");
+
+    return rows.join("");
   }
 
-  var openIds = {};
+  function recordHTML(t) {
+    var h = [];
+    h.push('<article class="rec' + (isSecret(t) ? " secret" : "") + (t.Rarity === "Unique" ? " unique" : "") + (flagged(t) ? " flagged" : "") + '" id="t-' + esc(t.ID) + '">');
+    h.push('<div class="rechead">');
+    h.push("<h3>" + esc(t["Display Name"]) + "</h3>");
+    h.push("<code>" + esc(t.ID) + "</code>");
+    h.push('<span class="spacer"></span>');
+    if (flagged(t)) h.push('<span class="pill flagged">tweak queue</span>');
+    if (isScarce(t)) h.push('<span class="pill scarce">' + esc(t.Scarcity) + "</span>");
+    h.push('<span class="pill p-' + esc(t.Rarity) + '">' + esc(t.Rarity) + "</span>");
+    var b = (t["Power Budget"] || "").replace("exempt", "").trim();
+    h.push('<span class="pill budget">' + esc(b) + " pt" + (b === "1" ? "" : "s") +
+      (/exempt/.test(t["Power Budget"]) ? " <s>ex</s>" : "") + "</span>");
+    h.push("</div>");
 
-  function visible() {
-    var q = state.q.trim().toLowerCase();
-    var any = RARITIES.some(function (r) { return state.rarity[r]; });
-    var out = TITLES.filter(function (t) {
-      if (q && t._blob.indexOf(q) === -1) return false;
-      if (state.cat && t.Category !== state.cat) return false;
-      if (any && !state.rarity[t.Rarity]) return false;
-      if (state.scarce && !t._scarce) return false;
-      if (state.secret && !t._secret) return false;
-      return true;
-    });
-    if (state.sort !== null) {
-      var col = COLS[state.sort];
-      var key = col.sort || function (t) { return String(t[col.key]).toLowerCase(); };
-      out = out.slice().sort(function (a, b) {
-        var x = key(a), y = key(b);
-        return (x < y ? -1 : x > y ? 1 : 0) * state.dir;
-      });
+    h.push('<table class="fields"><tbody>' + fieldRows(t) + "</tbody></table>");
+
+    if (!blank(t["Flavor Text"])) h.push('<p class="flavor">' + esc(t["Flavor Text"]) + "</p>");
+
+    h.push('<details class="rawline"' + (state.raw ? " open" : "") + ">");
+    h.push("<summary>csv row<button class=\"cp\" type=\"button\" data-id=\"" + esc(t.ID) + "\">copy</button></summary>");
+    h.push("<pre>" + esc(t._raw) + "</pre>");
+    h.push("</details>");
+    h.push("</article>");
+    return h.join("");
+  }
+
+  /* ---------- filter + paint ---------- */
+  function matches(t) {
+    if (state.cat && t.Category !== state.cat) return false;
+    var picked = Object.keys(state.rarities).filter(function (k) { return state.rarities[k]; });
+    if (picked.length && picked.indexOf(t.Rarity) === -1) return false;
+    if (state.scarce && !isScarce(t)) return false;
+    if (state.secret && !isSecret(t)) return false;
+    if (state.tweak && !flagged(t)) return false;
+    if (state.q) {
+      var hay = t._raw.toLowerCase();
+      var ok = state.q.toLowerCase().split(/\s+/).every(function (w) { return hay.indexOf(w) > -1; });
+      if (!ok) return false;
     }
-    return out;
+    return true;
   }
 
-  function render() {
-    var rows = visible();
-    el("count").textContent = rows.length + " / " + TITLES.length;
-    if (!rows.length) {
-      el("body").innerHTML = '<tr><td class="empty" colspan="' + COLS.length + '">No titles match those filters.</td></tr>';
+  function paint() {
+    var shown = TITLES.filter(matches);
+    document.getElementById("count").textContent = shown.length + " of " + TITLES.length;
+
+    var host = document.getElementById("records");
+    if (!shown.length) {
+      host.innerHTML = '<div class="empty">No title matches these filters.</div>';
+      document.getElementById("rail").innerHTML = "";
       return;
     }
-    el("body").innerHTML = rows.map(function (t) {
-      var i = TITLES.indexOf(t);
-      return rowHTML(t, i) + (openIds[t.ID] ? detailHTML(t) : "");
-    }).join("");
-    Array.prototype.forEach.call(document.querySelectorAll(".row"), function (tr) {
-      if (openIds[TITLES[+tr.dataset.i].ID]) tr.classList.add("open");
+
+    var out = [], rail = [];
+    CATS.forEach(function (c) {
+      var inCat = shown.filter(function (t) { return t.Category === c; });
+      if (!inCat.length) return;
+      var pts = inCat.reduce(function (a, t) { return a + (parseFloat(t["Power Budget"]) || 0); }, 0);
+      rail.push('<a href="#c-' + esc(c) + '">' + esc(c) + "<b>" + inCat.length + "</b></a>");
+      out.push('<section class="cat" id="c-' + esc(c) + '">');
+      out.push('<div class="cathead"><h2>' + esc(c) + '</h2><span class="n">' + inCat.length +
+        " title" + (inCat.length === 1 ? "" : "s") + '</span><span class="pts">' + pts + " pts</span></div>");
+      out.push('<div class="grid">' + inCat.map(recordHTML).join("") + "</div>");
+      out.push("</section>");
     });
+
+    host.style.display = "flex";
+    host.style.flexDirection = "column";
+    host.style.gap = "34px";
+    host.innerHTML = out.join("");
+    document.getElementById("rail").innerHTML = rail.join("");
   }
 
-  el("body").addEventListener("click", function (e) {
-    var tr = e.target.closest(".row");
-    if (!tr) return;
-    var t = TITLES[+tr.dataset.i];
-    openIds[t.ID] = !openIds[t.ID];
-    render();
-  });
-  el("body").addEventListener("keydown", function (e) {
-    if (e.key !== "Enter" && e.key !== " ") return;
-    var tr = e.target.closest(".row");
-    if (!tr) return;
-    e.preventDefault();
-    var t = TITLES[+tr.dataset.i];
-    openIds[t.ID] = !openIds[t.ID];
-    render();
-  });
+  /* ---------- wiring ---------- */
+  var qEl = document.getElementById("q");
+  qEl.addEventListener("input", function () { state.q = qEl.value.trim(); paint(); });
+  catSel.addEventListener("change", function () { state.cat = catSel.value; paint(); });
 
-  el("headRow").addEventListener("click", function (e) {
-    var th = e.target.closest("th");
-    if (!th) return;
-    var i = +th.dataset.i;
-    if (state.sort === i) state.dir = -state.dir;
-    else { state.sort = i; state.dir = 1; }
-    Array.prototype.forEach.call(el("headRow").children, function (h) { h.removeAttribute("data-dir"); });
-    th.setAttribute("data-dir", state.dir > 0 ? "asc" : "desc");
-    th.querySelector(".arw").textContent = state.dir > 0 ? "↓" : "↑";
-    render();
-  });
-
-  el("q").addEventListener("input", function (e) { state.q = e.target.value; render(); });
-  el("cat").addEventListener("change", function (e) { state.cat = e.target.value; render(); });
-  el("rarityChips").addEventListener("click", function (e) {
-    var b = e.target.closest(".chip");
+  document.getElementById("rarityChips").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-r]");
     if (!b) return;
-    var r = b.dataset.r;
-    state.rarity[r] = !state.rarity[r];
-    b.setAttribute("aria-pressed", state.rarity[r] ? "true" : "false");
-    render();
+    var r = b.getAttribute("data-r");
+    state.rarities[r] = !state.rarities[r];
+    b.setAttribute("aria-pressed", state.rarities[r] ? "true" : "false");
+    paint();
   });
-  ["fScarce", "fSecret"].forEach(function (id) {
-    el(id).addEventListener("click", function () {
-      var k = id === "fScarce" ? "scarce" : "secret";
-      state[k] = !state[k];
-      el(id).setAttribute("aria-pressed", state[k] ? "true" : "false");
-      render();
+
+  function flag(id, key) {
+    var el = document.getElementById(id);
+    el.addEventListener("click", function () {
+      state[key] = !state[key];
+      el.setAttribute("aria-pressed", state[key] ? "true" : "false");
+      paint();
     });
+  }
+  flag("fScarce", "scarce");
+  flag("fSecret", "secret");
+  flag("fTweak", "tweak");
+  flag("fRaw", "raw");
+
+  /* copy a csv row without collapsing the details it lives in */
+  document.getElementById("records").addEventListener("click", function (e) {
+    var b = e.target.closest("button.cp");
+    if (!b) return;
+    e.preventDefault();
+    var t = TITLES.filter(function (x) { return x.ID === b.getAttribute("data-id"); })[0];
+    if (!t) return;
+    var done = function () { b.textContent = "copied"; setTimeout(function () { b.textContent = "copy"; }, 1400); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t._raw).then(done, function () { legacy(t._raw, done); });
+    } else {
+      legacy(t._raw, done);
+    }
   });
 
-  /* ---------- reference cards ---------- */
-  el("rarityCards").innerHTML = RARITIES.map(function (r) {
-    var m = RARITY_META[r];
-    return '<div class="card"><h3><span class="swatch" style="background:#' + m.hex + '"></span>' + r +
-      '</h3><dl class="kv">' +
-      "<div><dt>Titles at this rarity</dt><dd>" + (rarityCount[r] || 0) + "</dd></div>" +
-      "<div><dt>Point budget</dt><dd>" + m.budget + "</dd></div>" +
-      "<div><dt>Starter roll weight</dt><dd>" + m.roll + "</dd></div>" +
-      "<div><dt>Chat format</dt><dd>#" + m.hex + " " + m.fmt + "</dd></div>" +
-      "</dl><p><b>Effort:</b> " + m.effort + "<br><b>UI:</b> " + m.ui + "</p></div>";
-  }).join("");
+  function legacy(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (err) { /* selection is left for a manual copy */ }
+    document.body.removeChild(ta);
+  }
 
-  el("scarcityCards").innerHTML = SCARCITY.map(function (s) {
-    var n = TITLES.filter(function (t) { return t.Scarcity === s.name; }).length;
-    return '<div class="card"><h3>' + s.name + '</h3><dl class="kv">' +
-      "<div><dt>Titles</dt><dd>" + n + "</dd></div>" +
-      "<div><dt>Max holders</dt><dd>" + s.holders + "</dd></div>" +
-      "</dl><p>" + s.note + "</p><p style=\"color:var(--ink-3)\">" + s.use + "</p></div>";
-  }).join("");
-
-  el("effectBody").innerHTML = EFFECT_CATALOG.map(function (row) {
-    var used = TITLES.filter(function (t) {
-      return t["Effect Types"].split(/\s+/).indexOf(row[0]) > -1;
-    }).length;
-    return "<tr>" +
-      '<td class="cx">' + esc(row[0]) + "</td>" +
-      "<td>" + esc(row[1]) + "</td>" +
-      '<td class="cx" style="color:var(--ink-3)">' + esc(row[2]) + "</td>" +
-      '<td class="num">' + esc(row[3]) + "</td>" +
-      '<td class="cx cx-' + esc(row[4]) + '">' + esc(row[4]) + "</td>" +
-      '<td class="num" style="color:' + (used ? "inherit" : "var(--ink-3)") + '">' + used + "</td>" +
-      "</tr>";
-  }).join("");
-
-  render();
+  paint();
 })();
 </script>

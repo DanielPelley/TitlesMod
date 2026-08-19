@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(& \"C:\\\\Users\\\\danie\\\\IdeaProjects\\\\TitlesMod\\\\design\\\\build-workbook.ps1\")"
+      "PowerShell(& \"C:\\\\Users\\\\danie\\\\IdeaProjects\\\\TitlesMod\\\\design\\\\build-workbook.ps1\")",
+      "Artifact"
     ]
   }
 }

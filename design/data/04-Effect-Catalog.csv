@@ -35,6 +35,8 @@ ON_KILL_PROC|Death event|n/a|10% chance to restore 1 heart on kill|4|Medium|Add 
 ON_HURT_PROC|Damage event|n/a|Below 30% HP gain Strength I for 5s|5|Medium|Cooldown mandatory
 ON_MINE_PROC|Block break event|n/a|3% chance to double ore drops|5|Medium|Respect Silk Touch and fortune. Do not double-fire on multi-block breaks
 LOOT_LUCK_CONTEXT|Loot context modifier|n/a|+1 effective luck on chest loot|4|Hard|Requires a global loot modifier
+ENCHANT_INTRINSIC|Attack event - apply an enchantment's effect as if the held weapon carried it|n/a|Fire Aspect I on any melee weapon|4|Medium|Apply the EFFECT - never write the enchantment onto the item or it survives being dropped or traded. Do not stack with a real Fire Aspect on the same weapon - take the higher level
+ACTIVE_ABILITY|Keybind or use event plus a per-player server-side cooldown|n/a|Throw a conjured ender pearl on a 5 second cooldown|6|Hard|THE FIRST ACTIVATED ABILITY IN THE MOD. Needs a keybind - a cooldown readout on the HUD - and cooldown validation on the server. Never trust a client-reported cooldown
 CUSTOM|Bespoke code|n/a|Varies|Varies|Hard|Reserve for Legendary/Mythic only - each one is a maintenance burden
 |||||||
 IMPORTANT|Attribute IDs above are from the 1.21.x-26.x line. Print the full attribute registry in-game once your dev env is running and correct any that moved or were renamed in 26.2.||||||
