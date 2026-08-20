@@ -1,10 +1,12 @@
 Phase|Milestone|Task|Deliverable|Depends On|Est. Effort|Priority|Status
-0 - Setup|Dev environment|Generate a NeoForge 26.2 project with ModDevGradle and confirm runClient launches|Empty mod loads in game|-|2h|P0|Not started
-0 - Setup|Dev environment|Print the full attribute and stat registries to a file in-game|Verified list of real attribute IDs for 26.2|Project runs|1h|P0|Not started
+0 - Setup|Dev environment|Generate a Forge 47.x / 1.20.1 project with ForgeGradle 6 on JDK 17 with Parchment mappings and confirm runClient launches|Empty mod loads in game|-|2h|P0|Not started
+0 - Setup|Dev environment|Print the full attribute and stat registries to a file in-game|Verified list of real attribute IDs for 1.20.1|Project runs|1h|P0|Not started
 0 - Setup|Repo hygiene|git init - .gitignore - LICENSE - README - mod metadata|Clean repo|-|1h|P0|Not started
+0 - Setup|Integration survey|Pin the exact mod list - 1.20.1 Forge versions - Maven coordinates - and whether each publishes a real API or needs reflection|A dependency block that actually resolves in Gradle|-|3h|P0|Not started
+1 - Core|Platform layer|Define the five or six interfaces that confine the Forge API - registration - networking - persistence - events - attributes - screen glue|No Forge import outside an adapter class|Setup|1d|P0|Not started
 1 - Core|Title registry|Codec-backed Title record and a datapack registry under data/titles/title/|Titles load from JSON and log on startup|Setup|1d|P0|Not started
 1 - Core|Effect system|TitleEffect interface + registry + codecs. Implement the ATTR_ family first.|Attribute effects apply and remove correctly|Title registry|2d|P0|Not started
-1 - Core|Player data|Data attachment holding earned ids - equipped ids - progress counters. copyOnDeath true.|Survives death - dimension change - relog|Setup|1d|P0|Not started
+1 - Core|Player data|Forge Capability holding a codec-backed record - earned ids - equipped ids - progress counters. Copy it in PlayerEvent.Clone.|Survives death - dimension change - relog|Platform layer|1d|P0|Not started
 1 - Core|Grant pipeline|grantTitle() - dedupe - fire an event - toast the player|Titles can be granted by command|Player data|4h|P0|Not started
 1 - Core|Commands|/titles grant revoke list for testing|Testable without playing|Grant pipeline|3h|P0|Not started
 2 - Progression|Vanilla stat conditions|Condition types reading Stats.BLOCK_MINED / ENTITY_KILLED / etc from JSON|Stone Breaker and Undead Bane earn themselves|Title registry|2d|P0|Not started
@@ -30,8 +32,18 @@ Phase|Milestone|Task|Deliverable|Depends On|Est. Effort|Priority|Status
 6 - Polish|Secret hints|Partial-progress hint reveal|Secrets stay discoverable|Titles screen|1d|P2|Not started
 6 - Polish|Config|Server balance config and client HUD config|Server owners can tune without forking|Core done|4h|P1|Not started
 6 - Polish|HUD and nameplate|Optional equipped-title display and chat prefix|Multiplayer flavour|Titles screen|1d|P2|Not started
+6 - Polish|Mod integrations|One isolated compat class per integration target - each behind a mod-loaded guard|Integrations work when present - mod works standalone when absent|Integration survey + core done|2d|P1|Not started
 7 - Release|Single player smoke test|Full playthrough in SP - verify scarce titles claim correctly against a one-player ledger|SP parity confirmed|Content done|2h|P0|Not started
 7 - Release|Dedicated server test|Two clients on a dedicated server - verify sync - contested claims - ledger persistence across restart|MP parity confirmed|Content done|4h|P0|Not started
 7 - Release|Compat pass|Verify every condition uses tags not hardcoded ids|Works in modpacks|Content done|4h|P1|Not started
 7 - Release|Docs|README - title list page - datapack authoring guide|Users and pack authors can use it|Content done|4h|P1|Not started
 7 - Release|Publish|Modrinth and CurseForge listing - screenshots - changelog|v1.0.0 released|All P0 and P1|4h|P1|Not started
+8 - Port|Port target|Pick the current STABLE Minecraft and NeoForge version at port time. Do not decide it now and do not accept a beta.|A confirmed stable target|1.20.1 v1 shipped|1h|P2|Not started
+8 - Port|Integration triage|Check which integration targets ever reached the new version. Drop the compat classes for those that did not.|Only live integrations ship|Port target|3h|P2|Not started
+8 - Port|Branch setup|Branch from 1.20.1 - no shared main - cherry-pick forward only|Two long-lived branches|Port target|1h|P2|Not started
+8 - Port|Toolchain|ModDevGradle - the JDK for that version line - unobfuscated mappings - no Parchment needed|runClient launches on the new version|Branch setup|4h|P2|Not started
+8 - Port|Platform adapters|Rewrite ONLY the platform layer implementations for NeoForge. Core logic should compile untouched against them.|Core compiles unchanged|Toolchain|3d|P2|Not started
+8 - Port|Capability to attachment|Move the player data record out of the Forge Capability into a NeoForge Data Attachment with copyOnDeath set|Player data survives death and relog on the new version|Platform adapters|4h|P2|Not started
+8 - Port|Attribute registry recheck|Re-print the attribute registry and fix every id renamed or removed since 1.20.1. Swap derived UUIDs for ResourceLocation modifier ids.|Every ATTR_ effect resolves|Platform adapters|4h|P2|Not started
+8 - Port|Screen rewrite|Re-fit the titles screen to the target version widget and rendering APIs|Titles screen usable on the new version|Platform adapters|2d|P2|Not started
+8 - Port|Parity test|Re-run the whole Phase 7 test list on the ported branch|New version at parity with 1.20.1 v1|Everything in 8|4h|P2|Not started
