@@ -7,6 +7,7 @@ Scarce title signature power|One memorable non-stat ability - utility - cosmetic
 DELIBERATE EXCEPTION|The Immortal's revive is on a 1 in-game day cooldown - roughly one free totem per 20 minutes of play|Player decision - accepted as knowingly overpowered. It is the reward for 150 deathless days and up to 10 players per server can hold it. If it proves too strong in play the dial to turn is the cooldown - not the title. Put the cooldown in the server config.
 Meta-titles (PROPOSED)|Collector +2 - Archivist +4 - Chronicler +6. Slot-exempt and budget-exempt. They grant budget rather than stats.|Answers Open Question 13 without making the cap a config number. A player who has earned half the mod ends at 52 instead of 40 - about one extra Rare title's worth of room - and the collection itself becomes the progression track. Grant no raw stats or they double-dip.
 Per-attribute hard caps|See table below|Second safety net. Even inside 40 points a player could dump everything into one attribute. Hard caps mean no single stat can run away.
+Stacking with other mods|Titles ADDS on top of whatever other mods grant. It never reads - clamps or overrides another mod's contribution.|DECIDED. Every integration target already ships its own levelling or stat system - Just Leveling and Passive Skill Tree in Soulrend - skill tree - origins and divine blessings in Cisco's Dragonfyre. The caps below limit what THIS mod contributes - not what the player ends up with. Reading the player's final attribute value would either zero out our bonus in those packs or clamp down health another mod granted. Additive-only is what makes the mod safe to drop into any pack.
 |||
 Sample builds at the 40-point cap|Composition|Total
 Broad generalist|10 Common/Uncommon titles|~25 - well under cap. Early game is unconstrained by design.
@@ -35,6 +36,7 @@ xp gain|+50%|
 fall damage reduction|-60% (before Unique exemptions)|First Dragonslayer's immunity is deliberately outside this
 |||
 Implementation note|Enforce the budget cap in the equip handler on the SERVER. Refuse the equip and send a message. Never trust the client.|
-Implementation note|Enforce per-attribute caps at modifier-application time - after summing all equipped and scarce contributions - by clamping the final total.|
+Implementation note|Enforce per-attribute caps on the TITLES-SOURCED total only. Sum the contributions from equipped and scarce titles - clamp that sum to the cap - then apply it. Never read the player's final attribute value.|player.getAttributeValue() returns the total from every mod and is the wrong number. Our own modifiers are identifiable by their derived UUIDs - we never need to inspect anyone else's.
+Implementation note|Apply ONE modifier per attribute per player - recomputed whenever the equipped set changes. Not one modifier per title.|Clamping becomes plain arithmetic before touching the attribute map at all. Unequip is a single removeModifier with a UUID we can always derive. We replace rather than accumulate - so a crash or a bad relog cannot leave orphaned modifiers silently stacking buffs.
 Implementation note|Show remaining budget live in the Titles screen as "31 / 40". Players will optimise against it and that is the fun.|
 Implementation note|Every number here belongs in the server config so pack authors can rebalance without forking.|
