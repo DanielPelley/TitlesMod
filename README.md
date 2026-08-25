@@ -21,9 +21,11 @@ Edit the CSVs, then:
 
 ## Target platform
 
-- **Minecraft 1.20.1** on **Forge 47.x**. Not a preference — every mod this one is built
-  to integrate with is Forge 1.20.1 only, and that is the one constraint that can't be
-  solved in code.
+- **Minecraft 1.20.1** on **Forge 47.x**. Not a preference — the packs this mod is built
+  to slot into are 1.20.1, and that is the one constraint that can't be solved in code.
+  Verified against Cisco's Dragonfyre's own manifest: `forge-47.4.13`, 375 mods. Soulrend
+  and Beyond Depth are Forge 1.20.1 too. Prominence II is **Fabric** and is cut from the
+  target list — Sinytra Connector runs Fabric mods on Forge, never the reverse.
 - **JDK 17** — 1.20.1 will not build on a newer toolchain
 - Official (Mojang) mappings + Parchment for parameter names. 1.20.1 is obfuscated.
 - Gradle + ForgeGradle 6
