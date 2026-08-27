@@ -9,15 +9,21 @@ bonuses and unique powers, come in rarities, and some are limited-quantity or un
 
 | File | What it is |
 | --- | --- |
-| `design/TitlesMod-Design.xlsx` | The design workbook — 9 sheets covering titles, effects, balance, UI, roadmap |
-| `design/data/*.csv` | Source of truth for the workbook (pipe-delimited, so commas are safe in prose) |
+| `design/data/*.csv` | **Source of truth** (pipe-delimited, so commas are safe in prose) |
+| `design/TitlesMod-Design.xlsx` | The design workbook — every sheet, for editing and sorting |
+| `design/titles-codex.html` | Browsable read-only view of all titles — filter by rarity, category, scarcity |
 | `design/build-workbook.ps1` | Regenerates the `.xlsx` from the CSVs. Requires Excel. |
+| `design/build-codex.ps1` | Regenerates the codex from the CSVs + `codex-template.html`. No dependencies. |
 
-Edit the CSVs, then:
+Edit the CSVs, then regenerate whichever view you need:
 
 ```powershell
-.\design\build-workbook.ps1
+.\design\build-workbook.ps1   # -> TitlesMod-Design.xlsx  (needs Excel)
+.\design\build-codex.ps1      # -> titles-codex.html      (open in any browser)
 ```
+
+The codex inlines the CSVs verbatim and parses them in the browser, so it cannot drift
+from the data. It is a single self-contained file — no server, no build step to view it.
 
 ## Target platform
 

@@ -1,0 +1,588 @@
+<title>Titles Codex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* ---------- tokens: light is the bare :root ---------- */
+:root{
+  --bg:#f5f3f8; --panel:#ffffff; --panel-2:#efecf4; --sunken:#e9e5f0;
+  --line:#ddd7e6; --line-soft:#e9e5f0;
+  --ink:#1a1622; --ink-2:#453e55; --muted:#6d6580;
+  --accent:#5a3fd6; --accent-soft:#ece7ff;
+  --shadow:0 1px 2px rgba(26,22,34,.05), 0 8px 22px -14px rgba(26,22,34,.28);
+  /* rarity: --p-* is the mod's literal hex (swatches, stripes); --t-* is the readable text tone */
+  --p-common:#AAAAAA;    --t-common:#5c5866;
+  --p-uncommon:#55FF55;  --t-uncommon:#2c7a33;
+  --p-rare:#55FFFF;      --t-rare:#0d7285;
+  --p-epic:#FF55FF;      --t-epic:#a1179f;
+  --p-legendary:#FFAA00; --t-legendary:#9a6200;
+  --p-mythic:#FF5555;    --t-mythic:#bf2f2c;
+  --p-unique:#00AAAA;    --t-unique:#06737a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131019; --panel:#1b1824; --panel-2:#221e2e; --sunken:#0f0d15;
+    --line:#312c42; --line-soft:#282336;
+    --ink:#ece8f4; --ink-2:#c3bcd4; --muted:#928aa6;
+    --accent:#9d86ff; --accent-soft:#241d3d;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.9);
+    --t-common:#b6b2c0; --t-uncommon:#6ee76e; --t-rare:#67e8f9; --t-epic:#f083f0;
+    --t-legendary:#ffbb33; --t-mythic:#ff8080; --t-unique:#2ed3d3;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131019; --panel:#1b1824; --panel-2:#221e2e; --sunken:#0f0d15;
+  --line:#312c42; --line-soft:#282336;
+  --ink:#ece8f4; --ink-2:#c3bcd4; --muted:#928aa6;
+  --accent:#9d86ff; --accent-soft:#241d3d;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.9);
+  --t-common:#b6b2c0; --t-uncommon:#6ee76e; --t-rare:#67e8f9; --t-epic:#f083f0;
+  --t-legendary:#ffbb33; --t-mythic:#ff8080; --t-unique:#2ed3d3;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Archivo,"Segoe UI",system-ui,sans-serif;
+  font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px; margin:0 auto; padding:0 22px}
+a{color:var(--accent)}
+.mono,code{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+
+/* ---------- masthead ---------- */
+header.mast{border-bottom:1px solid var(--line); background:var(--panel)}
+.mast-in{display:flex; flex-wrap:wrap; gap:26px; align-items:flex-end; justify-content:space-between; padding:34px 0 26px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 10px;
+}
+h1{
+  font-size:clamp(34px,5vw,52px); line-height:1.02; margin:0; font-weight:700;
+  letter-spacing:-.025em; text-wrap:balance;
+}
+.lede{margin:12px 0 0; max-width:60ch; color:var(--ink-2); font-size:16px}
+.srcnote{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; line-height:1.7;
+  color:var(--muted); border-left:2px solid var(--line); padding-left:14px; max-width:36ch;
+}
+.srcnote b{color:var(--ink-2); font-weight:500}
+
+/* ---------- figures strip ---------- */
+.figs{display:flex; flex-wrap:wrap; border-top:1px solid var(--line-soft)}
+.fig{padding:16px 26px 16px 0; margin-right:26px; border-right:1px solid var(--line-soft)}
+.fig:last-child{border-right:0; margin-right:0}
+.fig .n{font-size:26px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.fig .l{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+
+/* ---------- rarity distribution = the rarity filter ---------- */
+.dist{padding:26px 0 22px}
+.dist h2,.ref h2{
+  font-size:12px; font-family:"IBM Plex Mono",monospace; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 12px; font-weight:500;
+}
+.bar{display:flex; height:14px; border-radius:3px; overflow:hidden; background:var(--sunken); gap:2px}
+.bar button{
+  border:0; padding:0; cursor:pointer; display:block; height:100%;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.bar button.off{opacity:.18}
+.bar button:hover{transform:scaleY(1.4)}
+.legend{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.lg{
+  display:flex; align-items:center; gap:9px; cursor:pointer; text-align:left;
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:7px 12px 7px 9px; color:var(--ink); font-family:inherit; font-size:13px;
+  transition:border-color .15s ease, opacity .15s ease;
+}
+.lg:hover{border-color:var(--accent)}
+.lg.off{opacity:.42}
+.lg .sw{width:9px; height:22px; border-radius:2px; flex:none}
+.lg .nm{font-weight:600}
+.lg .ct{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+
+/* ---------- toolbar ---------- */
+.tools{
+  position:sticky; top:0; z-index:20; background:var(--bg);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:12px 0;
+}
+.tools-in{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+input[type=search],select{
+  font-family:inherit; font-size:13.5px; color:var(--ink);
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:8px 11px; min-height:38px;
+}
+input[type=search]{flex:1 1 240px; min-width:180px}
+input[type=search]::placeholder{color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tog{
+  display:inline-flex; align-items:center; gap:7px; cursor:pointer; user-select:none;
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:8px 12px; font-size:13.5px; min-height:38px;
+}
+.tog input{accent-color:var(--accent); margin:0}
+.tog.on{border-color:var(--accent); background:var(--accent-soft)}
+.count{
+  margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:12px;
+  color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.count b{color:var(--ink); font-weight:600}
+.linkbtn{background:none; border:0; color:var(--accent); font:inherit; font-size:13px; cursor:pointer; padding:6px 4px; text-decoration:underline; text-underline-offset:3px}
+
+/* ---------- cards ---------- */
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(345px,1fr));
+  gap:16px; padding:24px 0 8px; align-items:start;
+}
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:11px;
+  box-shadow:var(--shadow); overflow:hidden; position:relative;
+  padding:16px 17px 15px 20px;
+  display:flex; flex-direction:column; gap:11px;
+}
+.card::before{content:""; position:absolute; top:0; bottom:0; left:0; width:4px; background:var(--stripe)}
+.card.is-secret{border-style:dashed}
+.chead{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.tname{font-size:19px; font-weight:700; letter-spacing:-.015em; color:var(--tone); margin:0; line-height:1.15}
+.tid{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); margin-left:auto}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 8px; border-radius:4px;
+  background:var(--panel-2); color:var(--ink-2); border:1px solid var(--line-soft); white-space:nowrap;
+}
+.chip.rar{color:var(--tone); border-color:var(--stripe); background:var(--panel)}
+.chip.scarce{border-color:var(--p-unique); color:var(--t-unique)}
+.chip.sec{border-style:dashed}
+.row{display:flex; gap:10px; font-size:13.5px; line-height:1.45}
+.row .k{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); flex:0 0 74px; padding-top:3px;
+}
+.row .v{color:var(--ink-2); flex:1; min-width:0}
+.row .v b{color:var(--ink); font-weight:600}
+.mag{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink)}
+.hint{font-family:Newsreader,Georgia,serif; font-style:italic; font-size:15px; color:var(--ink-2)}
+.flavor{
+  font-family:Newsreader,Georgia,serif; font-style:italic; font-size:15.5px; line-height:1.42;
+  color:var(--muted); border-top:1px solid var(--line-soft); padding-top:11px;
+}
+/* budget meter */
+.budget{display:flex; align-items:center; gap:10px}
+.meter{flex:1; height:6px; border-radius:3px; background:var(--sunken); overflow:hidden; min-width:60px}
+.meter i{display:block; height:100%; background:var(--stripe); border-radius:3px}
+.budget .bl{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+/* spec disclosure */
+details.spec{border-top:1px solid var(--line-soft); padding-top:10px}
+details.spec>summary{
+  cursor:pointer; list-style:none; font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--muted);
+  display:flex; align-items:center; gap:7px;
+}
+details.spec>summary::-webkit-details-marker{display:none}
+details.spec>summary::after{content:"+"; font-size:13px; line-height:1}
+details.spec[open]>summary::after{content:"\2013"}
+details.spec>summary:hover{color:var(--accent)}
+.specbody{display:flex; flex-direction:column; gap:8px; padding-top:11px}
+.eff{
+  display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:11px;
+  padding:2px 7px; border-radius:4px; background:var(--accent-soft); color:var(--accent);
+  border:1px solid transparent; text-decoration:none; margin:0 4px 4px 0;
+}
+.eff:hover{border-color:var(--accent)}
+.empty{padding:70px 0; text-align:center; color:var(--muted)}
+
+/* ---------- reference ---------- */
+.ref{padding:34px 0; border-top:1px solid var(--line)}
+.ref h3{font-size:20px; margin:0 0 6px; letter-spacing:-.02em; font-weight:700}
+.ref p.sub{margin:0 0 18px; color:var(--muted); font-size:14px; max-width:74ch}
+.tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--panel)}
+table{border-collapse:collapse; width:100%; font-size:13px; min-width:700px}
+th{
+  text-align:left; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--muted); font-weight:500;
+  padding:11px 14px; border-bottom:1px solid var(--line); background:var(--panel-2);
+}
+td{padding:11px 14px; border-bottom:1px solid var(--line-soft); color:var(--ink-2); vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tr:target td{background:var(--accent-soft)}
+td.code{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink); white-space:nowrap}
+td.warn{color:var(--t-mythic)}
+.swcell{display:flex; align-items:center; gap:9px}
+.swcell i{width:9px; height:18px; border-radius:2px; flex:none}
+.notes{margin:20px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:13.5px; color:var(--ink-2); padding-left:16px; position:relative; max-width:84ch}
+.notes li::before{content:""; position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--accent)}
+footer{border-top:1px solid var(--line); padding:26px 0 46px; color:var(--muted); font-size:12.5px; font-family:"IBM Plex Mono",monospace; line-height:1.8}
+
+@media (max-width:640px){
+  .mast-in{padding:26px 0 20px}
+  .fig{padding-right:18px; margin-right:18px}
+  .row .k{flex-basis:66px}
+  .grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none !important; animation:none !important}}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="mast-in">
+      <div>
+        <p class="eyebrow">Titles &middot; LitRPG progression mod &middot; design workbook</p>
+        <h1>Titles Codex</h1>
+        <p class="lede">Every title in the mod &mdash; what earns it, what it does, and what it costs
+          against the 40&#8209;point equip budget. Filter by rarity, category or scarcity; open
+          <em>Spec</em> on any card for the implementation detail.</p>
+      </div>
+      <div class="srcnote">
+        generated from<br>
+        <b>design/data/*.csv</b><br>
+        branch <b>design/retarget-1.20.1-forge</b><br>
+        commit <b>2a281fa</b><br><br>
+        the CSVs are the source of truth &mdash;<br>edit those, not this page
+      </div>
+    </div>
+    <div class="figs" id="figs"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="dist">
+    <h2>Rarity distribution &mdash; click a band to filter</h2>
+    <div class="bar" id="bar"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+</div>
+
+<div class="tools">
+  <div class="wrap tools-in">
+    <input type="search" id="q" placeholder="Search names, unlocks, effects, flavor text&hellip;" aria-label="Search titles">
+    <select id="cat" aria-label="Filter by category"></select>
+    <select id="scar" aria-label="Filter by scarcity"></select>
+    <select id="sort" aria-label="Sort order">
+      <option value="rarity">Sort: rarity, high to low</option>
+      <option value="cat">Sort: category</option>
+      <option value="name">Sort: name A&ndash;Z</option>
+      <option value="budget">Sort: power budget</option>
+    </select>
+    <label class="tog" id="sectog"><input type="checkbox" id="sec"> Secret only</label>
+    <button class="linkbtn" id="reset">Reset</button>
+    <span class="count" id="count"></span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>No titles match those filters.</p>
+
+  <section class="ref">
+    <h2>Reference</h2>
+    <h3>Rarity &amp; scarcity</h3>
+    <p class="sub">Rarity sets presentation and the power band. Scarcity sets how many players may hold
+      the title at once. <em>Unique</em> is the one word that appears in both columns and means something
+      different in each &mdash; read scarcity for the holder count, rarity for the presentation.</p>
+    <div class="tblwrap"><table id="rartbl"></table></div>
+    <div class="tblwrap" style="margin-top:16px"><table id="scartbl"></table></div>
+    <ul class="notes">
+      <li><b>Titles are never revoked.</b> Once earned a title is yours permanently &mdash; it survives
+        death, inactivity and dimension change. The sole exception is the Contested type, currently
+        The Unrivaled alone, which passes to whoever beats the holder's score.</li>
+      <li><b>Secret is not a rarity.</b> It is a yes/no flag orthogonal to rarity &mdash; a secret title has
+        normal rarity and normal power, the player just doesn't know it exists until it fires. Each one
+        carries a hint string the Titles screen reveals once partial progress is detected.</li>
+      <li><b>Starter roll weight</b> is the relative chance of that rarity in the free title granted on
+        first join. Mythic and Unique are never rolled &mdash; they are only ever earned.</li>
+    </ul>
+  </section>
+
+  <section class="ref">
+    <h3>Effect catalog</h3>
+    <p class="sub">Every effect code used on the cards above, with its 1.20.1 implementation hook.
+      Rows flagged in red have no vanilla attribute on 1.20.1 and need an event hook instead &mdash; the
+      standing cost of the retarget.</p>
+    <div class="tblwrap"><table id="efftbl"></table></div>
+    <ul class="notes">
+      <li>On 1.20.1 an attribute modifier is keyed by UUID, not ResourceLocation. Store a
+        ResourceLocation-shaped id in the title JSON and derive the UUID with
+        <code>UUID.nameUUIDFromBytes</code> so content files survive the NeoForge port untouched.</li>
+      <li>Always remove modifiers on unequip <em>and</em> on logout-save. Orphaned
+        <code>max_health</code> modifiers are the classic way this kind of mod corrupts a save.</li>
+      <li>12 of the 23 <code>ATTR_</code> effects have no vanilla attribute on 1.20.1 &mdash; all were added
+        in 1.20.5 / 1.21. <code>ATTR_SNEAKING_SPEED</code> and <code>ATTR_EXPLOSION_KB_RESIST</code> are
+        flagged to cut for v1.</li>
+    </ul>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  Titles &mdash; design phase, no code yet &middot; target Minecraft 1.20.1 on Forge 47.x, JDK 17<br>
+  Regenerate the Excel workbook with <code>.\design\build-workbook.ps1</code>
+</div></footer>
+
+<script id="csv-titles" type="text/plain">
+@@INJECT:02-Titles.csv@@
+</script>
+<script id="csv-effects" type="text/plain">
+@@INJECT:04-Effect-Catalog.csv@@
+</script>
+<script id="csv-rarity" type="text/plain">
+@@INJECT:03-Rarity-and-Scarcity.csv@@
+</script>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- parse the pipe-delimited sheets embedded above ----------
+  var raw = function (id) { return (document.getElementById(id).textContent || "").trim(); };
+  function rows(text) {
+    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim() !== ""; });
+    var head = lines.shift().split("|");
+    return lines.map(function (l) {
+      var c = l.split("|"), o = {};
+      head.forEach(function (h, i) { o[h.trim()] = (c[i] || "").trim(); });
+      return o;
+    });
+  }
+  var TITLES = rows(raw("csv-titles")).filter(function (t) { return t.ID; });
+
+  // Effect catalog: drop the trailing spacer + IMPORTANT note rows.
+  var EFFECTS = rows(raw("csv-effects")).filter(function (e) {
+    return e["Effect Type"] && e["Effect Type"] !== "IMPORTANT";
+  });
+
+  // The rarity sheet stacks three blocks under one header. Slice them apart by hand.
+  var rsLines = raw("csv-rarity").split(/\r?\n/);
+  function block(startsWith) {
+    var i = rsLines.findIndex(function (l) { return l.indexOf(startsWith) === 0; });
+    if (i < 0) return [];
+    var out = [rsLines[i]];
+    for (var j = i + 1; j < rsLines.length; j++) {
+      var l = rsLines[j];
+      if (!l.replace(/\|/g, "").trim()) break;
+      if (/^(Scarcity Type|Note)\|/.test(l)) break;
+      out.push(l);
+    }
+    return rows(out.join("\n"));
+  }
+  var RARITIES = block("Rarity|");
+  var SCARCITIES = block("Scarcity Type|");
+
+  var ORDER = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Unique"];
+  var SLUG = function (s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-"); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  };
+  var blank = function (v) { return !v || v === "-"; };
+
+  // Power Budget reads like "7" or "4 exempt".
+  function budget(t) {
+    var m = /(-?\d+)/.exec(t["Power Budget"] || "");
+    return { pts: m ? parseInt(m[1], 10) : 0, exempt: /exempt/i.test(t["Power Budget"] || "") };
+  }
+
+  // ---------- masthead figures ----------
+  var secretCount = TITLES.filter(function (t) { return t.Secret === "Yes"; }).length;
+  var scarceCount = TITLES.filter(function (t) { return t.Scarcity !== "Unlimited"; }).length;
+  var cats = Array.from(new Set(TITLES.map(function (t) { return t.Category; }))).sort();
+  var figs = [
+    [TITLES.length, "titles defined"],
+    [cats.length, "categories"],
+    ["40", "point equip budget"],
+    ["10", "equip slots"],
+    [scarceCount, "scarce (slot-exempt)"],
+    [secretCount, "secret"]
+  ];
+  document.getElementById("figs").innerHTML = figs.map(function (f) {
+    return '<div class="fig"><div class="n">' + esc(f[0]) + '</div><div class="l">' + esc(f[1]) + "</div></div>";
+  }).join("");
+
+  // ---------- rarity distribution doubles as the rarity filter ----------
+  var counts = {};
+  ORDER.forEach(function (r) { counts[r] = 0; });
+  TITLES.forEach(function (t) { if (counts[t.Rarity] != null) counts[t.Rarity]++; });
+
+  var active = new Set(); // empty === no rarity filter
+  var bar = document.getElementById("bar"), legend = document.getElementById("legend");
+
+  bar.innerHTML = ORDER.map(function (r) {
+    return '<button type="button" data-r="' + r + '" title="' + r + " \u2014 " + counts[r] + ' titles" ' +
+      'aria-label="Filter to ' + r + '" style="flex:' + counts[r] + ';background:var(--p-' + SLUG(r) + ')"></button>';
+  }).join("");
+
+  legend.innerHTML = ORDER.map(function (r) {
+    var meta = RARITIES.filter(function (x) { return x.Rarity === r; })[0] || {};
+    return '<button type="button" class="lg" data-r="' + r + '">' +
+      '<span class="sw" style="background:var(--p-' + SLUG(r) + ')"></span>' +
+      '<span><span class="nm" style="color:var(--t-' + SLUG(r) + ')">' + r + "</span><br>" +
+      '<span class="ct">' + counts[r] + " \u00b7 " + esc(meta["Power Budget"] || "") + " pts</span></span></button>";
+  }).join("");
+
+  function toggleRarity(r) {
+    if (active.has(r)) active.delete(r); else active.add(r);
+    paintRarityControls();
+    render();
+  }
+  function paintRarityControls() {
+    var none = active.size === 0;
+    [].forEach.call(bar.children, function (b) { b.classList.toggle("off", !none && !active.has(b.dataset.r)); });
+    [].forEach.call(legend.children, function (b) { b.classList.toggle("off", !none && !active.has(b.dataset.r)); });
+  }
+  bar.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) toggleRarity(b.dataset.r); });
+  legend.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) toggleRarity(b.dataset.r); });
+
+  // ---------- selects ----------
+  function fill(sel, label, values) {
+    sel.innerHTML = '<option value="">' + label + "</option>" +
+      values.map(function (v) { return '<option value="' + esc(v) + '">' + esc(v) + "</option>"; }).join("");
+  }
+  var elCat = document.getElementById("cat"), elScar = document.getElementById("scar");
+  fill(elCat, "All categories", cats);
+  fill(elScar, "All scarcities", Array.from(new Set(TITLES.map(function (t) { return t.Scarcity; }))).sort());
+
+  // ---------- card ----------
+  function card(t) {
+    var slug = SLUG(t.Rarity), b = budget(t), scarce = t.Scarcity !== "Unlimited";
+    var cap = b.exempt ? 5 : 40;
+    var pct = Math.max(0, Math.min(100, (b.pts / cap) * 100));
+
+    var effs = (t["Effect Types"] || "").split(/\s+/).filter(Boolean).map(function (code) {
+      var known = EFFECTS.some(function (e) { return e["Effect Type"] === code; });
+      return known
+        ? '<a class="eff" href="#eff-' + esc(code) + '">' + esc(code) + "</a>"
+        : '<span class="eff">' + esc(code) + "</span>";
+    }).join("");
+
+    var h = [];
+    h.push('<article class="card' + (t.Secret === "Yes" ? " is-secret" : "") +
+      '" style="--stripe:var(--p-' + slug + ');--tone:var(--t-' + slug + ')">');
+
+    h.push('<div class="chead"><h3 class="tname">' + esc(t["Display Name"]) +
+      '</h3><span class="tid">' + esc(t.ID) + "</span></div>");
+
+    h.push('<div class="chips"><span class="chip rar">' + esc(t.Rarity) + "</span>" +
+      '<span class="chip">' + esc(t.Category) + "</span>" +
+      (scarce ? '<span class="chip scarce">' + esc(t.Scarcity) +
+        (blank(t["Max Holders"]) ? "" : " \u00b7 " + esc(t["Max Holders"])) + "</span>" : "") +
+      (t.Secret === "Yes" ? '<span class="chip sec">Secret</span>' : "") + "</div>");
+
+    h.push('<div class="row"><span class="k">Earn by</span><span class="v">' + esc(t["How to Obtain"]) + "</span></div>");
+    h.push('<div class="row"><span class="k">Effect</span><span class="v"><b>' + esc(t["Effect Summary"]) +
+      '</b><br><span class="mag">' + esc(t.Magnitude) + "</span></span></div>");
+
+    if (t.Secret === "Yes" && !blank(t.Hint)) {
+      h.push('<div class="row"><span class="k">In-game hint</span><span class="v hint">' + esc(t.Hint) + "</span></div>");
+    }
+
+    h.push('<div class="budget"><span class="meter"><i style="width:' + pct.toFixed(1) + '%"></i></span>' +
+      '<span class="bl">' + (b.exempt
+        ? b.pts + " / 5 raw stats \u00b7 budget-exempt"
+        : b.pts + " / 40 budget") + "</span></div>");
+
+    h.push('<details class="spec"><summary>Spec</summary><div class="specbody">');
+    h.push('<div class="row"><span class="k">Effect&nbsp;types</span><span class="v">' + effs + "</span></div>");
+    h.push('<div class="row"><span class="k">Tracked by</span><span class="v">' + esc(t["Progress Source"]) + "</span></div>");
+    h.push('<div class="row"><span class="k">Build</span><span class="v">' + esc(t["Impl Complexity"]) +
+      " to implement \u00b7 " + esc(t.Status) + "</span></div>");
+    h.push("</div></details>");
+
+    if (!blank(t["Flavor Text"])) h.push('<p class="flavor">' + esc(t["Flavor Text"]) + "</p>");
+    h.push("</article>");
+    return h.join("");
+  }
+
+  // ---------- render ----------
+  var grid = document.getElementById("grid"), empty = document.getElementById("empty"),
+      countEl = document.getElementById("count"), elQ = document.getElementById("q"),
+      elSec = document.getElementById("sec"), elSort = document.getElementById("sort"),
+      secTog = document.getElementById("sectog");
+
+  function render() {
+    var q = elQ.value.trim().toLowerCase();
+    var list = TITLES.filter(function (t) {
+      if (active.size && !active.has(t.Rarity)) return false;
+      if (elCat.value && t.Category !== elCat.value) return false;
+      if (elScar.value && t.Scarcity !== elScar.value) return false;
+      if (elSec.checked && t.Secret !== "Yes") return false;
+      if (!q) return true;
+      return Object.keys(t).some(function (k) { return (t[k] || "").toLowerCase().indexOf(q) > -1; });
+    });
+
+    var by = elSort.value;
+    list.sort(function (a, b) {
+      if (by === "name") return a["Display Name"].localeCompare(b["Display Name"]);
+      if (by === "budget") return budget(b).pts - budget(a).pts || a["Display Name"].localeCompare(b["Display Name"]);
+      if (by === "cat") {
+        return a.Category.localeCompare(b.Category) ||
+          ORDER.indexOf(b.Rarity) - ORDER.indexOf(a.Rarity) ||
+          a["Display Name"].localeCompare(b["Display Name"]);
+      }
+      return ORDER.indexOf(b.Rarity) - ORDER.indexOf(a.Rarity) ||
+        a.Category.localeCompare(b.Category) ||
+        a["Display Name"].localeCompare(b["Display Name"]);
+    });
+
+    grid.innerHTML = list.map(card).join("");
+    empty.hidden = list.length > 0;
+    countEl.innerHTML = "<b>" + list.length + "</b> of " + TITLES.length + " titles";
+    secTog.classList.toggle("on", elSec.checked);
+  }
+
+  [elQ, elCat, elScar, elSec, elSort].forEach(function (el) {
+    el.addEventListener(el === elQ ? "input" : "change", render);
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    elQ.value = ""; elCat.value = ""; elScar.value = ""; elSec.checked = false;
+    elSort.value = "rarity"; active.clear(); paintRarityControls(); render();
+  });
+
+  // ---------- reference tables ----------
+  document.getElementById("rartbl").innerHTML =
+    "<thead><tr><th>Rarity</th><th>Hex</th><th>Chat format</th><th>Count</th><th>Power budget</th>" +
+    "<th>Starter roll</th><th>Typical unlock effort</th><th>UI treatment</th></tr></thead><tbody>" +
+    RARITIES.map(function (r) {
+      var s = SLUG(r.Rarity);
+      return "<tr><td><span class='swcell'><i style='background:var(--p-" + s + ")'></i>" +
+        "<b style='color:var(--t-" + s + ")'>" + esc(r.Rarity) + "</b></span></td>" +
+        "<td class='code'>#" + esc(r["Hex Color"]) + "</td>" +
+        "<td class='code'>" + esc(r["MC Format"]) + "</td>" +
+        "<td class='code'>" + esc(r["Count in Sheet"]) + "</td>" +
+        "<td class='code'>" + esc(r["Power Budget"]) + "</td>" +
+        "<td class='code'>" + esc(r["Starter Roll Weight"]) + "</td>" +
+        "<td>" + esc(r["Typical Unlock Effort"]) + "</td>" +
+        "<td>" + esc(r["UI Treatment"]) + "</td></tr>";
+    }).join("") + "</tbody>";
+
+  document.getElementById("scartbl").innerHTML =
+    "<thead><tr><th>Scarcity</th><th>Meaning</th><th>Max holders</th><th>On holder death</th>" +
+    "<th>On inactivity</th><th>On server reset</th><th>Recommended use</th></tr></thead><tbody>" +
+    SCARCITIES.map(function (s) {
+      return "<tr><td class='code'>" + esc(s["Scarcity Type"]) + "</td><td>" + esc(s.Meaning) + "</td>" +
+        "<td class='code'>" + esc(s["Max Holders"]) + "</td><td>" + esc(s["On Holder Death"]) + "</td>" +
+        "<td>" + esc(s["On Holder Inactivity"]) + "</td><td>" + esc(s["On Server Reset"]) + "</td>" +
+        "<td>" + esc(s["Recommended Use"]) + "</td></tr>";
+    }).join("") + "</tbody>";
+
+  var used = {};
+  TITLES.forEach(function (t) {
+    (t["Effect Types"] || "").split(/\s+/).filter(Boolean).forEach(function (c) { used[c] = (used[c] || 0) + 1; });
+  });
+  document.getElementById("efftbl").innerHTML =
+    "<thead><tr><th>Effect type</th><th>Used by</th><th>Implementation hook</th>" +
+    "<th>Attribute ID on 1.20.1</th><th>Cost</th><th>Difficulty</th><th>Notes</th></tr></thead><tbody>" +
+    EFFECTS.map(function (e) {
+      var code = e["Effect Type"], attr = e["Attribute ID on 1.20.1 (VERIFY in-game)"] || "";
+      return "<tr id='eff-" + esc(code) + "'><td class='code'>" + esc(code) + "</td>" +
+        "<td class='code'>" + (used[code] ? used[code] + "\u00d7" : "\u2014") + "</td>" +
+        "<td>" + esc(e["Implementation Hook"]) + "</td>" +
+        "<td class='code" + (/NOT IN 1\.20\.1/.test(attr) ? " warn" : "") + "'>" + esc(attr) + "</td>" +
+        "<td class='code'>" + esc(e["Point Cost"]) + "</td><td>" + esc(e.Difficulty) + "</td>" +
+        "<td>" + esc(e.Notes) + "</td></tr>";
+    }).join("") + "</tbody>";
+
+  paintRarityControls();
+  render();
+})();
+</script>

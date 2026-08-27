@@ -1,0 +1,761 @@
+<title>Titles Codex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* ---------- tokens: light is the bare :root ---------- */
+:root{
+  --bg:#f5f3f8; --panel:#ffffff; --panel-2:#efecf4; --sunken:#e9e5f0;
+  --line:#ddd7e6; --line-soft:#e9e5f0;
+  --ink:#1a1622; --ink-2:#453e55; --muted:#6d6580;
+  --accent:#5a3fd6; --accent-soft:#ece7ff;
+  --shadow:0 1px 2px rgba(26,22,34,.05), 0 8px 22px -14px rgba(26,22,34,.28);
+  /* rarity: --p-* is the mod's literal hex (swatches, stripes); --t-* is the readable text tone */
+  --p-common:#AAAAAA;    --t-common:#5c5866;
+  --p-uncommon:#55FF55;  --t-uncommon:#2c7a33;
+  --p-rare:#55FFFF;      --t-rare:#0d7285;
+  --p-epic:#FF55FF;      --t-epic:#a1179f;
+  --p-legendary:#FFAA00; --t-legendary:#9a6200;
+  --p-mythic:#FF5555;    --t-mythic:#bf2f2c;
+  --p-unique:#00AAAA;    --t-unique:#06737a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131019; --panel:#1b1824; --panel-2:#221e2e; --sunken:#0f0d15;
+    --line:#312c42; --line-soft:#282336;
+    --ink:#ece8f4; --ink-2:#c3bcd4; --muted:#928aa6;
+    --accent:#9d86ff; --accent-soft:#241d3d;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.9);
+    --t-common:#b6b2c0; --t-uncommon:#6ee76e; --t-rare:#67e8f9; --t-epic:#f083f0;
+    --t-legendary:#ffbb33; --t-mythic:#ff8080; --t-unique:#2ed3d3;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131019; --panel:#1b1824; --panel-2:#221e2e; --sunken:#0f0d15;
+  --line:#312c42; --line-soft:#282336;
+  --ink:#ece8f4; --ink-2:#c3bcd4; --muted:#928aa6;
+  --accent:#9d86ff; --accent-soft:#241d3d;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.9);
+  --t-common:#b6b2c0; --t-uncommon:#6ee76e; --t-rare:#67e8f9; --t-epic:#f083f0;
+  --t-legendary:#ffbb33; --t-mythic:#ff8080; --t-unique:#2ed3d3;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Archivo,"Segoe UI",system-ui,sans-serif;
+  font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px; margin:0 auto; padding:0 22px}
+a{color:var(--accent)}
+.mono,code{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+
+/* ---------- masthead ---------- */
+header.mast{border-bottom:1px solid var(--line); background:var(--panel)}
+.mast-in{display:flex; flex-wrap:wrap; gap:26px; align-items:flex-end; justify-content:space-between; padding:34px 0 26px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 10px;
+}
+h1{
+  font-size:clamp(34px,5vw,52px); line-height:1.02; margin:0; font-weight:700;
+  letter-spacing:-.025em; text-wrap:balance;
+}
+.lede{margin:12px 0 0; max-width:60ch; color:var(--ink-2); font-size:16px}
+.srcnote{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; line-height:1.7;
+  color:var(--muted); border-left:2px solid var(--line); padding-left:14px; max-width:36ch;
+}
+.srcnote b{color:var(--ink-2); font-weight:500}
+
+/* ---------- figures strip ---------- */
+.figs{display:flex; flex-wrap:wrap; border-top:1px solid var(--line-soft)}
+.fig{padding:16px 26px 16px 0; margin-right:26px; border-right:1px solid var(--line-soft)}
+.fig:last-child{border-right:0; margin-right:0}
+.fig .n{font-size:26px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.fig .l{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+
+/* ---------- rarity distribution = the rarity filter ---------- */
+.dist{padding:26px 0 22px}
+.dist h2,.ref h2{
+  font-size:12px; font-family:"IBM Plex Mono",monospace; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 12px; font-weight:500;
+}
+.bar{display:flex; height:14px; border-radius:3px; overflow:hidden; background:var(--sunken); gap:2px}
+.bar button{
+  border:0; padding:0; cursor:pointer; display:block; height:100%;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.bar button.off{opacity:.18}
+.bar button:hover{transform:scaleY(1.4)}
+.legend{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.lg{
+  display:flex; align-items:center; gap:9px; cursor:pointer; text-align:left;
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:7px 12px 7px 9px; color:var(--ink); font-family:inherit; font-size:13px;
+  transition:border-color .15s ease, opacity .15s ease;
+}
+.lg:hover{border-color:var(--accent)}
+.lg.off{opacity:.42}
+.lg .sw{width:9px; height:22px; border-radius:2px; flex:none}
+.lg .nm{font-weight:600}
+.lg .ct{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+
+/* ---------- toolbar ---------- */
+.tools{
+  position:sticky; top:0; z-index:20; background:var(--bg);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:12px 0;
+}
+.tools-in{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+input[type=search],select{
+  font-family:inherit; font-size:13.5px; color:var(--ink);
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:8px 11px; min-height:38px;
+}
+input[type=search]{flex:1 1 240px; min-width:180px}
+input[type=search]::placeholder{color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tog{
+  display:inline-flex; align-items:center; gap:7px; cursor:pointer; user-select:none;
+  background:var(--panel); border:1px solid var(--line); border-radius:7px;
+  padding:8px 12px; font-size:13.5px; min-height:38px;
+}
+.tog input{accent-color:var(--accent); margin:0}
+.tog.on{border-color:var(--accent); background:var(--accent-soft)}
+.count{
+  margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:12px;
+  color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.count b{color:var(--ink); font-weight:600}
+.linkbtn{background:none; border:0; color:var(--accent); font:inherit; font-size:13px; cursor:pointer; padding:6px 4px; text-decoration:underline; text-underline-offset:3px}
+
+/* ---------- cards ---------- */
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(345px,1fr));
+  gap:16px; padding:24px 0 8px; align-items:start;
+}
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:11px;
+  box-shadow:var(--shadow); overflow:hidden; position:relative;
+  padding:16px 17px 15px 20px;
+  display:flex; flex-direction:column; gap:11px;
+}
+.card::before{content:""; position:absolute; top:0; bottom:0; left:0; width:4px; background:var(--stripe)}
+.card.is-secret{border-style:dashed}
+.chead{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.tname{font-size:19px; font-weight:700; letter-spacing:-.015em; color:var(--tone); margin:0; line-height:1.15}
+.tid{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); margin-left:auto}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 8px; border-radius:4px;
+  background:var(--panel-2); color:var(--ink-2); border:1px solid var(--line-soft); white-space:nowrap;
+}
+.chip.rar{color:var(--tone); border-color:var(--stripe); background:var(--panel)}
+.chip.scarce{border-color:var(--p-unique); color:var(--t-unique)}
+.chip.sec{border-style:dashed}
+.row{display:flex; gap:10px; font-size:13.5px; line-height:1.45}
+.row .k{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); flex:0 0 74px; padding-top:3px;
+}
+.row .v{color:var(--ink-2); flex:1; min-width:0}
+.row .v b{color:var(--ink); font-weight:600}
+.mag{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink)}
+.hint{font-family:Newsreader,Georgia,serif; font-style:italic; font-size:15px; color:var(--ink-2)}
+.flavor{
+  font-family:Newsreader,Georgia,serif; font-style:italic; font-size:15.5px; line-height:1.42;
+  color:var(--muted); border-top:1px solid var(--line-soft); padding-top:11px;
+}
+/* budget meter */
+.budget{display:flex; align-items:center; gap:10px}
+.meter{flex:1; height:6px; border-radius:3px; background:var(--sunken); overflow:hidden; min-width:60px}
+.meter i{display:block; height:100%; background:var(--stripe); border-radius:3px}
+.budget .bl{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+/* spec disclosure */
+details.spec{border-top:1px solid var(--line-soft); padding-top:10px}
+details.spec>summary{
+  cursor:pointer; list-style:none; font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--muted);
+  display:flex; align-items:center; gap:7px;
+}
+details.spec>summary::-webkit-details-marker{display:none}
+details.spec>summary::after{content:"+"; font-size:13px; line-height:1}
+details.spec[open]>summary::after{content:"\2013"}
+details.spec>summary:hover{color:var(--accent)}
+.specbody{display:flex; flex-direction:column; gap:8px; padding-top:11px}
+.eff{
+  display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:11px;
+  padding:2px 7px; border-radius:4px; background:var(--accent-soft); color:var(--accent);
+  border:1px solid transparent; text-decoration:none; margin:0 4px 4px 0;
+}
+.eff:hover{border-color:var(--accent)}
+.empty{padding:70px 0; text-align:center; color:var(--muted)}
+
+/* ---------- reference ---------- */
+.ref{padding:34px 0; border-top:1px solid var(--line)}
+.ref h3{font-size:20px; margin:0 0 6px; letter-spacing:-.02em; font-weight:700}
+.ref p.sub{margin:0 0 18px; color:var(--muted); font-size:14px; max-width:74ch}
+.tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--panel)}
+table{border-collapse:collapse; width:100%; font-size:13px; min-width:700px}
+th{
+  text-align:left; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--muted); font-weight:500;
+  padding:11px 14px; border-bottom:1px solid var(--line); background:var(--panel-2);
+}
+td{padding:11px 14px; border-bottom:1px solid var(--line-soft); color:var(--ink-2); vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tr:target td{background:var(--accent-soft)}
+td.code{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink); white-space:nowrap}
+td.warn{color:var(--t-mythic)}
+.swcell{display:flex; align-items:center; gap:9px}
+.swcell i{width:9px; height:18px; border-radius:2px; flex:none}
+.notes{margin:20px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:13.5px; color:var(--ink-2); padding-left:16px; position:relative; max-width:84ch}
+.notes li::before{content:""; position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--accent)}
+footer{border-top:1px solid var(--line); padding:26px 0 46px; color:var(--muted); font-size:12.5px; font-family:"IBM Plex Mono",monospace; line-height:1.8}
+
+@media (max-width:640px){
+  .mast-in{padding:26px 0 20px}
+  .fig{padding-right:18px; margin-right:18px}
+  .row .k{flex-basis:66px}
+  .grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none !important; animation:none !important}}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="mast-in">
+      <div>
+        <p class="eyebrow">Titles &middot; LitRPG progression mod &middot; design workbook</p>
+        <h1>Titles Codex</h1>
+        <p class="lede">Every title in the mod &mdash; what earns it, what it does, and what it costs
+          against the 40&#8209;point equip budget. Filter by rarity, category or scarcity; open
+          <em>Spec</em> on any card for the implementation detail.</p>
+      </div>
+      <div class="srcnote">
+        generated from<br>
+        <b>design/data/*.csv</b><br>
+        branch <b>design/retarget-1.20.1-forge</b><br>
+        commit <b>2a281fa</b><br><br>
+        the CSVs are the source of truth &mdash;<br>edit those, not this page
+      </div>
+    </div>
+    <div class="figs" id="figs"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="dist">
+    <h2>Rarity distribution &mdash; click a band to filter</h2>
+    <div class="bar" id="bar"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+</div>
+
+<div class="tools">
+  <div class="wrap tools-in">
+    <input type="search" id="q" placeholder="Search names, unlocks, effects, flavor text&hellip;" aria-label="Search titles">
+    <select id="cat" aria-label="Filter by category"></select>
+    <select id="scar" aria-label="Filter by scarcity"></select>
+    <select id="sort" aria-label="Sort order">
+      <option value="rarity">Sort: rarity, high to low</option>
+      <option value="cat">Sort: category</option>
+      <option value="name">Sort: name A&ndash;Z</option>
+      <option value="budget">Sort: power budget</option>
+    </select>
+    <label class="tog" id="sectog"><input type="checkbox" id="sec"> Secret only</label>
+    <button class="linkbtn" id="reset">Reset</button>
+    <span class="count" id="count"></span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>No titles match those filters.</p>
+
+  <section class="ref">
+    <h2>Reference</h2>
+    <h3>Rarity &amp; scarcity</h3>
+    <p class="sub">Rarity sets presentation and the power band. Scarcity sets how many players may hold
+      the title at once. <em>Unique</em> is the one word that appears in both columns and means something
+      different in each &mdash; read scarcity for the holder count, rarity for the presentation.</p>
+    <div class="tblwrap"><table id="rartbl"></table></div>
+    <div class="tblwrap" style="margin-top:16px"><table id="scartbl"></table></div>
+    <ul class="notes">
+      <li><b>Titles are never revoked.</b> Once earned a title is yours permanently &mdash; it survives
+        death, inactivity and dimension change. The sole exception is the Contested type, currently
+        The Unrivaled alone, which passes to whoever beats the holder's score.</li>
+      <li><b>Secret is not a rarity.</b> It is a yes/no flag orthogonal to rarity &mdash; a secret title has
+        normal rarity and normal power, the player just doesn't know it exists until it fires. Each one
+        carries a hint string the Titles screen reveals once partial progress is detected.</li>
+      <li><b>Starter roll weight</b> is the relative chance of that rarity in the free title granted on
+        first join. Mythic and Unique are never rolled &mdash; they are only ever earned.</li>
+    </ul>
+  </section>
+
+  <section class="ref">
+    <h3>Effect catalog</h3>
+    <p class="sub">Every effect code used on the cards above, with its 1.20.1 implementation hook.
+      Rows flagged in red have no vanilla attribute on 1.20.1 and need an event hook instead &mdash; the
+      standing cost of the retarget.</p>
+    <div class="tblwrap"><table id="efftbl"></table></div>
+    <ul class="notes">
+      <li>On 1.20.1 an attribute modifier is keyed by UUID, not ResourceLocation. Store a
+        ResourceLocation-shaped id in the title JSON and derive the UUID with
+        <code>UUID.nameUUIDFromBytes</code> so content files survive the NeoForge port untouched.</li>
+      <li>Always remove modifiers on unequip <em>and</em> on logout-save. Orphaned
+        <code>max_health</code> modifiers are the classic way this kind of mod corrupts a save.</li>
+      <li>12 of the 23 <code>ATTR_</code> effects have no vanilla attribute on 1.20.1 &mdash; all were added
+        in 1.20.5 / 1.21. <code>ATTR_SNEAKING_SPEED</code> and <code>ATTR_EXPLOSION_KB_RESIST</code> are
+        flagged to cut for v1.</li>
+    </ul>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  Titles &mdash; design phase, no code yet &middot; target Minecraft 1.20.1 on Forge 47.x, JDK 17<br>
+  Regenerate the Excel workbook with <code>.\design\build-workbook.ps1</code>
+</div></footer>
+
+<script id="csv-titles" type="text/plain">
+ID|Display Name|Category|Rarity|Scarcity|Max Holders|Secret|Hint|How to Obtain|Progress Source|Effect Summary|Effect Types|Magnitude|Power Budget|Impl Complexity|Status|Flavor Text
+novice|Novice|Starter|Common|Unlimited|-|No|-|Granted on first join if the random roll gives nothing better|First-join grant|Small all-round nudge for new characters|ATTR_MAX_HEALTH|+2.0 max health|2|Easy|Planned|Everyone starts somewhere.
+wanderer|Wanderer|Starter|Common|Unlimited|-|No|-|Possible random starter title|First-join grant|Slightly faster on foot|ATTR_MOVEMENT_SPEED|+4%|2|Easy|Planned|The road was there before you were.
+tinkerer|Tinkerer|Starter|Common|Unlimited|-|No|-|Possible random starter title|First-join grant|Tools last a little longer|CUSTOM|-10% durability consumption|2|Medium|Planned|Fix it twice and it never breaks.
+forager|Forager|Starter|Common|Unlimited|-|No|-|Possible random starter title|First-join grant|Food restores slightly more saturation|CUSTOM|+15% saturation from food|2|Medium|Planned|The forest sets a table for those who look.
+scrapper|Scrapper|Starter|Common|Unlimited|-|No|-|Possible random starter title|First-join grant|Bare-fist damage up|ATTR_ATTACK_DAMAGE|+1.0 when empty-handed|2|Medium|Planned|No sword? No problem.
+stone_breaker|Stone Breaker|Mining|Common|Unlimited|-|No|-|Break 10 stone-family blocks with an empty hand|Vanilla stat BLOCK_MINED + empty-hand check|Bare hands break stone-tier blocks at stone pickaxe speed and they drop properly|TOOL_TIER_HAND ATTR_BLOCK_BREAK_SPEED|Hand = stone tier speed and drops|3|Hard|Planned|Knuckles like gravel.
+pick_hand|Pick Hand|Mining|Common|Unlimited|-|No|-|Mine 2000 blocks with a pickaxe|Vanilla stat BLOCK_MINED|Pickaxes swing faster|TOOL_PROFICIENCY|+20% pickaxe break speed|3|Medium|Planned|The handle wore down to fit your grip.
+iron_knuckles|Iron Knuckles|Mining|Rare|Unlimited|-|No|-|Break 40 blocks by hand after earning Stone Breaker|Custom counter|Bare hands reach iron tier|TOOL_TIER_HAND|Hand = iron tier speed and drops|6|Hard|Planned|You stopped noticing the blood.
+deepslate_delver|Deepslate Delver|Mining|Uncommon|Unlimited|-|No|-|Mine 500 deepslate|Vanilla stat BLOCK_MINED|Faster mining below sea level|ATTR_BLOCK_BREAK_SPEED|+15% while below y=0|3|Medium|Planned|The stone gets meaner the deeper you go.
+vein_seeker|Vein Seeker|Mining|Rare|Unlimited|-|No|-|Mine 250 ore blocks of any type|Vanilla stat BLOCK_MINED over an ore tag|Chance at extra ore drops|ON_MINE_PROC ATTR_LUCK|8% double drop and +1 luck|5|Medium|Planned|You can hear where the metal sleeps.
+spelunker|Spelunker|Mining|Uncommon|Unlimited|-|No|-|Spend 10 in-game days below y=-40|Tick sampler every 100 ticks|Faint sight in total darkness|PASSIVE_EFFECT|Night Vision while below y=0|3|Medium|Planned|Daylight is a rumor down here.
+quarrymaster|Quarrymaster|Mining|Epic|Limited|3|No|-|Mine 40000 blocks total|Vanilla stat sum|SIGNATURE - mining mastery. Utility only - no combat power.|ATTR_BLOCK_BREAK_SPEED ATTR_MINING_EFFICIENCY|+20% speed and +2 efficiency|4 exempt|Easy|Planned|The mountain lost.
+obsidian_willed|Obsidian Willed|Mining|Rare|Unlimited|-|No|-|Mine 64 obsidian|Vanilla stat BLOCK_MINED|Resistant to explosions|DMG_VS_DAMAGE_SOURCE ATTR_EXPLOSION_KB_RESIST|-25% explosion damage and +0.5 explosion kb resist|5|Medium|Planned|Slow to break. Slower to bend.
+woodcutter|Woodcutter|Gathering|Common|Unlimited|-|No|-|Chop 500 logs|Vanilla stat BLOCK_MINED over the logs tag|Axes bite deeper|TOOL_PROFICIENCY|+25% axe break speed|3|Medium|Planned|The forest is just a queue.
+groundskeeper|Groundskeeper|Gathering|Common|Unlimited|-|No|-|Dig 2000 dirt-family blocks|Vanilla stat BLOCK_MINED over a tag|Shovels move more|TOOL_PROFICIENCY|+25% shovel break speed|3|Medium|Planned|Somebody has to move the hill.
+undead_bane|Undead Bane|Combat|Common|Unlimited|-|No|-|Kill 100 zombies|Vanilla stat ENTITY_KILLED|More damage to the whole undead tag|DMG_VS_TYPE|+15% vs undead entity type tag|4|Medium|Planned|They keep coming. So do you.
+web_cutter|Web Cutter|Combat|Common|Unlimited|-|No|-|Kill 100 spiders|Vanilla stat ENTITY_KILLED|More damage to arthropods and immunity to web slowdown|DMG_VS_TYPE CUSTOM|+15% vs arthropods and normal speed in cobwebs|4|Medium|Planned|Eight legs. Same result.
+drowned_hunter|Drowned Hunter|Combat|Common|Unlimited|-|No|-|Kill 100 drowned|Vanilla stat ENTITY_KILLED|More damage to drowned|DMG_VS_TYPE|+10% vs drowned|2|Easy|Planned|They were sailors once.
+husk_breaker|Husk Breaker|Combat|Common|Unlimited|-|No|-|Kill 75 husks|Vanilla stat ENTITY_KILLED|More damage to husks|DMG_VS_TYPE|+10% vs husks|2|Easy|Planned|The desert mummifies its mistakes.
+bogged_hunter|Bogged Hunter|Combat|Common|Unlimited|-|No|-|Kill 50 bogged|Vanilla stat ENTITY_KILLED|More damage to bogged|DMG_VS_TYPE|+10% vs bogged|2|Easy|Planned|Something rotted and kept the bow.
+ashen_reaper|Ashen Reaper|Combat|Common|Unlimited|-|No|-|Kill 50 wither skeletons|Vanilla stat ENTITY_KILLED|More damage to wither skeletons|DMG_VS_TYPE|+10% vs wither skeletons|2|Easy|Planned|The fortress keeps making more.
+piglin_bruiser|Piglin Bruiser|Combat|Common|Unlimited|-|No|-|Kill 100 piglins or piglin brutes|Vanilla stat ENTITY_KILLED|More damage to piglins|DMG_VS_TYPE|+10% vs piglins and piglin brutes|2|Easy|Planned|Gold only buys so much patience.
+hoglin_hunter|Hoglin Hunter|Combat|Common|Unlimited|-|No|-|Kill 50 hoglins or zoglins|Vanilla stat ENTITY_KILLED|More damage to hoglins|DMG_VS_TYPE|+10% vs hoglins and zoglins|2|Easy|Planned|Pork chops with a temper.
+ghast_swatter|Ghast Swatter|Combat|Common|Unlimited|-|No|-|Kill 25 ghasts|Vanilla stat ENTITY_KILLED|More damage to ghasts|DMG_VS_TYPE|+10% vs ghasts|2|Easy|Planned|Crying does not help either of you.
+witch_hunter|Witch Hunter|Combat|Common|Unlimited|-|No|-|Kill 50 witches|Vanilla stat ENTITY_KILLED|More damage to witches|DMG_VS_TYPE|+10% vs witches|2|Easy|Planned|She drank the wrong one.
+slime_splitter|Slime Splitter|Combat|Common|Unlimited|-|No|-|Kill 100 slimes or magma cubes|Vanilla stat ENTITY_KILLED|More damage to slimes|DMG_VS_TYPE|+10% vs slimes and magma cubes|2|Easy|Planned|Halving a problem is not solving it.
+phantom_swatter|Phantom Swatter|Combat|Common|Unlimited|-|No|-|Kill 50 phantoms|Vanilla stat ENTITY_KILLED|More damage to phantoms|DMG_VS_TYPE|+10% vs phantoms|2|Easy|Planned|Go to bed.
+guardian_diver|Guardian Diver|Combat|Common|Unlimited|-|No|-|Kill 50 guardians|Vanilla stat ENTITY_KILLED|More damage to guardians|DMG_VS_TYPE|+10% vs guardians and elder guardians|2|Easy|Planned|The temple stares back.
+exterminator|Exterminator|Combat|Common|Unlimited|-|No|-|Kill 100 silverfish or endermites|Vanilla stat ENTITY_KILLED|More damage to infestation mobs|DMG_VS_TYPE|+10% vs silverfish and endermites|2|Easy|Planned|Check the walls. Always check the walls.
+vex_swatter|Vex Swatter|Combat|Common|Unlimited|-|No|-|Kill 50 vexes|Vanilla stat ENTITY_KILLED|More damage to vexes|DMG_VS_TYPE|+10% vs vexes|2|Easy|Planned|Small. Fast. Rude.
+breeze_catcher|Breeze Catcher|Combat|Common|Unlimited|-|No|-|Kill 25 breezes|Vanilla stat ENTITY_KILLED|More damage to breezes|DMG_VS_TYPE|+10% vs breezes|2|Easy|Planned|You cannot punch wind. You did anyway.
+shulker_cracker|Shulker Cracker|Combat|Common|Unlimited|-|No|-|Kill 30 shulkers|Vanilla stat ENTITY_KILLED|More damage to shulkers|DMG_VS_TYPE|+10% vs shulkers|2|Easy|Planned|A box with opinions.
+ravager_breaker|Ravager Breaker|Combat|Common|Unlimited|-|No|-|Kill 25 ravagers|Vanilla stat ENTITY_KILLED|More damage to ravagers|DMG_VS_TYPE|+10% vs ravagers|2|Easy|Planned|It stopped. Eventually.
+bone_splitter|Bone Splitter|Combat|Uncommon|Unlimited|-|No|-|Kill 100 skeletons|Vanilla stat ENTITY_KILLED|More damage to skeletons and less from arrows|DMG_VS_TYPE DMG_RESIST_FROM_TYPE|+15% vs skeletal and -10% projectile damage|5|Medium|Planned|Aim for the ribs. There is nothing else there.
+creeper_defuser|Creeper Defuser|Combat|Rare|Unlimited|-|No|-|Kill 50 creepers without dying to one|Kill counter with a death reset|Creepers barely scratch you|DMG_RESIST_FROM_TYPE DMG_VS_TYPE|-40% creeper explosion damage and +15% vs creepers|6|Medium|Planned|That hiss used to mean something.
+ender_hunter|Ender Hunter|Combat|Uncommon|Unlimited|-|No|-|Kill 20 endermen|Vanilla stat ENTITY_KILLED|More damage to endermen|DMG_VS_TYPE|+20% vs endermen|5|Easy|Planned|Look. Just do not blink.
+blaze_quencher|Blaze Quencher|Combat|Rare|Unlimited|-|No|-|Kill 50 blazes|Vanilla stat ENTITY_KILLED|Fire resistance and damage vs nether mobs|ATTR_BURNING_TIME DMG_VS_TYPE|-60% burn time and +15% vs blazes|5|Medium|Planned|Cool under pressure.
+raid_breaker|Raid Breaker|Combat|Epic|Unlimited|-|No|-|Win 5 village raids|Vanilla advancement hero_of_the_village|Damage vs illagers and better villager prices|DMG_VS_TYPE CUSTOM|+20% vs illagers and -15% trade cost|6|Hard|Planned|The bells stopped ringing when you arrived.
+shieldbearer|Shieldbearer|Combat|Uncommon|Unlimited|-|No|-|Block 500 damage with a shield|Custom counter on shield block|Tougher and steadier|ATTR_ARMOR_TOUGHNESS ATTR_KNOCKBACK_RESIST|+2 toughness and +0.2 kb resist|5|Medium|Planned|A wall that walks.
+duelist|Duelist|Combat|Epic|Unlimited|-|No|-|Land 100 fully-charged critical hits|Attack event with crit flag|Crits hit harder|CUSTOM|+30% critical hit damage|6|Medium|Planned|Timing beats strength.
+berserker|Berserker|Combat|Epic|Unlimited|-|No|-|Kill 25 hostile mobs while below 4 hearts|Kill event with health check|Damage scales as health drops|ON_HURT_PROC ATTR_ATTACK_DAMAGE|Up to +30% damage below 30% HP|7|Medium|Planned|Pain is just information.
+berserker_unlimited|Berserker Unlimited|Combat|Mythic|Unlimited|-|Yes|Something in you stopped flinching a long time ago.|Kill 100 hostile mobs while at or below 2 hearts|Kill event with a health check|Permanently faster and hitting harder - no low-health condition on the payout|ATTR_ATTACK_DAMAGE ATTR_MOVEMENT_SPEED|+15% damage and +10% movement speed|7|Medium|Planned|Two hearts is plenty. You have not needed more in a long time.
+marksman|Marksman|Combat|Rare|Unlimited|-|No|-|Kill 50 mobs with a bow from over 30 blocks|Projectile kill event with distance|Arrows fly truer and hit harder|CUSTOM|+15% projectile damage and reduced arrow drop|6|Hard|Planned|The wind is a suggestion.
+dragonslayer|Dragonslayer|Combat|Legendary|Unlimited|-|No|-|Kill the Ender Dragon|Vanilla stat ENTITY_KILLED|Broad combat mastery|ATTR_ATTACK_DAMAGE ATTR_MAX_HEALTH|+10% damage and +12 max health|7|Easy|Planned|It was big. You were stubborn.
+first_dragonslayer|First Dragonslayer|Combat|Unique|Unique|1|No|-|Be the first player on this world to kill the Ender Dragon|Server ledger claim|SIGNATURE - never take fall damage. Small combat edge on top.|CUSTOM ATTR_ATTACK_DAMAGE|Fall damage immunity and +5% damage|4 exempt|Medium|Planned|There is only ever one first.
+monster_slayer|Monster Slayer|Combat|Unique|Founding|10|Yes|Eradication of these fiends is the only solution...|Be one of the first 10 players on the server to kill 150 of every standard hostile mob - list defined in the datapack - bosses excluded|Vanilla stat ENTITY_KILLED checked per type against the datapack list - server ledger claim|SIGNATURE - broad mastery over every monster in the world. Does nothing in PvP.|DMG_VS_TYPE|+20% vs all hostile mobs - never vs players|5 exempt|Medium|Planned|Nothing in the dark is new to you anymore.
+wither_bane|Wither Bane|Combat|Legendary|Unlimited|-|No|-|Kill the Wither|Vanilla stat ENTITY_KILLED|Immune to wither and stronger against bosses|CUSTOM DMG_VS_TYPE|Wither effect immunity and +10% vs bosses|9|Medium|Planned|Three heads. No survivors.
+healthy|Healthy|Survival|Common|Unlimited|-|No|-|Keep the hunger bar full for 3 consecutive in-game days|Tick sampler on food level|Two extra hearts|ATTR_MAX_HEALTH|+4.0 max health|4|Easy|Planned|Three square meals and a long nap.
+heat_hardened|Heat Hardened|Survival|Common|Unlimited|-|No|-|Take 200 total fire or lava damage and live|Damage source counter|Fire hurts less and ends sooner|DMG_VS_DAMAGE_SOURCE ATTR_BURNING_TIME|-10% fire damage and -25% burn time|3|Easy|Planned|You have been on fire enough times to have a routine.
+cold_hardened|Cold Hardened|Survival|Common|Unlimited|-|No|-|Take 100 total freezing damage|Damage source counter|Freezing hurts less|DMG_VS_DAMAGE_SOURCE|-15% freeze damage|2|Easy|Planned|Shivering is just a bad habit.
+blast_hardened|Blast Hardened|Survival|Common|Unlimited|-|No|-|Survive 25 explosions|Damage source counter|Explosions hurt less|DMG_VS_DAMAGE_SOURCE|-10% explosion damage|2|Easy|Planned|Ears still ringing. Worth it.
+arrow_reader|Arrow Reader|Survival|Common|Unlimited|-|No|-|Take 100 arrow hits|Damage source counter|Projectiles hurt less|DMG_VS_DAMAGE_SOURCE|-10% projectile damage|2|Easy|Planned|You watch the hands - not the arrow.
+hard_headed|Hard Headed|Survival|Common|Unlimited|-|No|-|Be hit by 20 falling blocks|Damage source counter|Falling blocks barely register|DMG_VS_DAMAGE_SOURCE|-50% falling block damage|2|Easy|Planned|The anvil lost.
+venom_tested|Venom Tested|Survival|Common|Unlimited|-|No|-|Spend 10 real minutes poisoned|Tick sampler on active effects|Poison and magic damage hurt less|DMG_VS_DAMAGE_SOURCE|-25% poison and magic damage|2|Easy|Planned|Everything is a dosage question. This is the low end.
+well_rested|Well Rested|Survival|Common|Unlimited|-|No|-|Sleep through 30 nights|Sleep event counter|Constant low-grade regeneration|PASSIVE_EFFECT|Regeneration I at all times|3|Medium|Planned|Eight hours changes a person.
+ironclad|Ironclad|Survival|Common|Unlimited|-|No|-|Wear a full set of iron armor for 3 in-game days|Tick sampler on armor slots|Armor works better|ATTR_ARMOR|+1.5 armor|3|Easy|Planned|Heavy is comforting.
+deep_breather|Deep Breather|Survival|Common|Unlimited|-|No|-|Spend 30 minutes underwater|Tick sampler while submerged|Longer breath and no underwater mining penalty|ATTR_OXYGEN_BONUS ATTR_SUBMERGED_MINING|+3 oxygen and +0.5 submerged mining|3|Easy|Planned|Lungs like a bellows.
+cliffhanger|Cliffhanger|Survival|Uncommon|Unlimited|-|No|-|Survive 20 falls that deal damage|Damage source counter|Falls hurt much less|ATTR_SAFE_FALL_DISTANCE ATTR_FALL_DAMAGE_MULT|+4 safe fall and -35% fall damage|4|Easy|Planned|Gravity keeps trying. Gravity keeps failing.
+frostborn|Frostborn|Survival|Uncommon|Unlimited|-|No|-|Spend 5 in-game days in a snowy biome|Tick sampler with biome check|Immune to powder snow freezing and faster on ice|CUSTOM ATTR_MOVEMENT_SPEED|Freeze immunity and +10% speed on ice|4|Medium|Planned|The cold gave up on you.
+fireproof|Fireproof|Survival|Rare|Unlimited|-|No|-|Survive being in lava for 10 seconds total|Damage source counter|Burns end quickly and hurt less|ATTR_BURNING_TIME DMG_VS_DAMAGE_SOURCE|-70% burn time and -25% fire damage|5|Medium|Planned|You smell like a forge and you like it.
+famine_walker|Famine Walker|Survival|Rare|Unlimited|-|Yes|Nobody ever earned this on a full stomach.|Survive 1 in-game day at zero hunger without dying|Tick sampler on food level|Hunger drains much slower|CUSTOM|-40% exhaustion rate|5|Medium|Planned|You forgot what full feels like.
+unbroken|Unbroken|Survival|Legendary|Unlimited|-|No|-|Survive 50 in-game days without dying|Playtime stat minus death reset|Substantially tougher|ATTR_MAX_HEALTH ATTR_ARMOR|+6 max health and +2 armor|8|Medium|Planned|Fifty days is a long time to be careful.
+the_immortal|The Immortal|Survival|Mythic|Limited|10|No|-|Survive 150 in-game days without a single death|Playtime stat minus death reset|SIGNATURE - one free cheat of death per in-game day|CUSTOM ATTR_MAX_HEALTH|Totem-style revive on a 1 in-game day cooldown and +2 max health|4 exempt|Hard|Planned|Death has stopped filing the paperwork.
+sprinter|Sprinter|Exploration|Common|Unlimited|-|No|-|Sprint 20000 blocks|Vanilla stat SPRINT_ONE_CM|Sprinting costs less food|CUSTOM|-25% sprint exhaustion|2|Medium|Planned|Second wind arrived early and stayed.
+climber|Climber|Exploration|Common|Unlimited|-|No|-|Climb 5000 blocks of ladder or vine|Vanilla stat CLIMB_ONE_CM|Faster on ladders and vines|CUSTOM|+50% climb speed|2|Medium|Planned|Up is just sideways with commitment.
+boatwright|Boatwright|Exploration|Common|Unlimited|-|No|-|Travel 10000 blocks by boat|Vanilla stat BOAT_ONE_CM|Boats move faster|CUSTOM|+15% boat speed|2|Medium|Planned|Two planks and an opinion about water.
+rider|Rider|Exploration|Common|Unlimited|-|No|-|Travel 10000 blocks mounted|Vanilla stat HORSE_ONE_CM|Mounts move faster|CUSTOM|+10% mount speed|2|Medium|Planned|You stopped holding on years ago.
+light_footed|Light Footed|Exploration|Common|Unlimited|-|No|-|Sneak 2000 blocks|Vanilla stat CROUCH_ONE_CM|Sneak without the crawl|ATTR_SNEAKING_SPEED|+30% sneaking speed|1|Easy|Planned|Quiet and quick are not opposites.
+cartographer|Cartographer|Exploration|Uncommon|Unlimited|-|No|-|Visit 10 distinct biomes|Custom biome-visited set|Faster travel on foot|ATTR_MOVEMENT_SPEED ATTR_STEP_HEIGHT|+8% speed and +0.5 step height|4|Medium|Planned|The blank spaces are getting smaller.
+ocean_born|Ocean Born|Exploration|Uncommon|Unlimited|-|No|-|Travel 20000 blocks by boat or swimming|Vanilla distance stats|Move well in water|ATTR_WATER_MOVE_EFF ATTR_OXYGEN_BONUS|+0.5 water efficiency and +2 oxygen|4|Easy|Planned|Land is where you keep your things.
+nether_native|Nether Native|Exploration|Rare|Unlimited|-|No|-|Spend 7 in-game days in the Nether|Tick sampler with dimension check|At home in hell|ATTR_BURNING_TIME DMG_VS_TYPE|-50% burn time and +10% vs nether mobs|5|Medium|Planned|The screaming became background noise.
+treasure_hunter|Treasure Hunter|Exploration|Rare|Unlimited|-|No|-|Open 50 naturally-generated loot chests|Custom container-open tracker|Better loot rolls|LOOT_LUCK_CONTEXT ATTR_LUCK|+2 effective luck on generated loot|6|Hard|Planned|X does not actually mark anything. You check anyway.
+void_walker|Void Walker|Exploration|Epic|Unlimited|-|No|-|Enter 10 distinct End Cities|Structure lookup on a tick sampler while in the End - dedupe by structure start position|Ender pearls cost you nothing|CUSTOM ATTR_FALL_DAMAGE_MULT|No pearl teleport damage and -50% fall damage|7|Medium|Planned|Edges are a matter of opinion.
+cinderhand|Cinderhand|Exploration|Rare|Unlimited|-|Yes|Something came back through the portal with you.|Enter the Nether for the first time|Dimension change event - first entry to the_nether|Your weapons burn without being enchanted|ENCHANT_INTRINSIC|Fire Aspect I on melee attacks|5|Medium|Planned|The heat did not stay behind.
+farstep|Farstep|Exploration|Epic|Unlimited|-|Yes|Distance stopped being the problem some time ago.|Enter the End for the first time|Dimension change event - first entry to the_end|Throw an ender pearl you do not have|ACTIVE_ABILITY|Conjured ender pearl on use - 5 second cooldown - costs nothing|7|Hard|Planned|You left something out there. It answers when you call.
+apprentice_smith|Apprentice Smith|Crafting|Common|Unlimited|-|No|-|Craft 100 pieces of armor|Vanilla stat ITEM_CRAFTED over a tag|Armor lasts longer|CUSTOM|-10% armor durability consumption|2|Medium|Planned|Cheap plate - patched twice - still holding.
+master_smith|Master Smith|Crafting|Rare|Unlimited|-|No|-|Craft 200 tools or weapons|Vanilla stat ITEM_CRAFTED over a tag|Your gear outlives everyone else's|CUSTOM|-20% durability consumption on tools and armor|6|Medium|Planned|Measure once. You already know.
+enchanter|Enchanter|Crafting|Epic|Unlimited|-|No|-|Enchant 50 items|Vanilla stat over enchanting table interaction|Better enchantment rolls|CUSTOM|+2 effective enchanting levels and -1 lapis cost|7|Hard|Planned|The words rearrange themselves for you now.
+alchemist|Alchemist|Crafting|Rare|Unlimited|-|No|-|Brew 100 potions|Custom brewing-stand tracker|Potions last longer on you|POTION_DURATION_MULT|+30% duration on beneficial effects|6|Medium|Planned|Everything is a dosage question.
+grand_alchemist|Grand Alchemist|Crafting|Legendary|Limited|2|No|-|Brew every potion type in the game|Custom brewed-type set|SIGNATURE - your brews come out a tier stronger|POTION_AMPLIFIER_BOOST|+1 amplifier on self-brewed potions from a fixed allowlist|5 exempt|Hard|Planned|You stopped reading the recipes years ago.
+haggler|Haggler|Trading|Common|Unlimited|-|No|-|Complete 20 villager trades|Vanilla stat TRADED_WITH_VILLAGER|A small discount everywhere|CUSTOM|-10% trade cost|2|Medium|Planned|You always ask. It usually works.
+restocker|Restocker|Trading|Uncommon|Unlimited|-|No|-|Complete 100 villager trades|Vanilla stat TRADED_WITH_VILLAGER|Villagers restock sooner|CUSTOM|-25% villager restock time|3|Medium|Planned|They work harder when you are watching.
+caravan_friend|Caravan Friend|Trading|Uncommon|Unlimited|-|No|-|Trade with 10 different wandering traders|Custom trader-uuid set|Wandering traders find you more often|CUSTOM|Double wandering trader spawn rate near you|3|Medium|Planned|The llamas remember you.
+master_trader|Master Trader|Trading|Rare|Unlimited|-|No|-|Complete 200 villager trades|Vanilla stat TRADED_WITH_VILLAGER|Villagers like you|CUSTOM|-25% trade cost and faster restocks|6|Hard|Planned|Everyone has a price. You found the discount.
+harvester|Harvester|Farming|Common|Unlimited|-|No|-|Harvest 1000 mature crops|Vanilla stat BLOCK_MINED over a crop tag|Crops sometimes yield double|ON_MINE_PROC|10% double crop drop|3|Medium|Planned|The field owes you nothing and pays anyway.
+beekeeper|Beekeeper|Farming|Common|Unlimited|-|No|-|Harvest 50 honey bottles or honeycomb|Vanilla stat ITEM_USED with a block check|Bees never turn on you|CUSTOM|Bees never become hostile toward you|2|Medium|Planned|You explained yourself and they listened.
+shepherd|Shepherd|Farming|Uncommon|Unlimited|-|No|-|Breed 100 animals|Vanilla stat ANIMALS_BRED|Animals follow you further and breed faster|ATTR_TEMPT_RANGE CUSTOM|+4 tempt range and -30% breed cooldown|4|Medium|Planned|They trust you. Do not think about dinner.
+angler|Angler|Farming|Uncommon|Unlimited|-|No|-|Catch 250 fish|Vanilla stat FISH_CAUGHT|Better fishing loot and faster bites|ATTR_LUCK CUSTOM|+2 luck while holding a rod and -25% bite time|4|Medium|Planned|Patience with a hook on the end.
+bricklayer|Bricklayer|Building|Common|Unlimited|-|No|-|Place 10000 blocks|Vanilla stat BLOCK_PLACED|Slightly longer reach for building|ATTR_INTERACTION_RANGE|+0.5 block interaction range|2|Easy|Planned|One more row before dark.
+scaffolder|Scaffolder|Building|Uncommon|Unlimited|-|No|-|Place 500 blocks above y=120|Vanilla stat BLOCK_PLACED with a height check|Safe and fast at height|ATTR_SAFE_FALL_DISTANCE CUSTOM|+3 safe fall distance and +50% scaffolding climb speed|4|Medium|Planned|Height stopped being a feeling.
+landscaper|Landscaper|Building|Uncommon|Unlimited|-|No|-|Till 500 blocks and dig 5000|Vanilla stats over hoe and shovel use|Terrain tools move faster and you step up ledges|TOOL_PROFICIENCY ATTR_STEP_HEIGHT|+25% shovel and hoe speed and +0.5 step height|4|Medium|Planned|The land had it coming.
+architect|Architect|Building|Epic|Unlimited|-|No|-|Place 100000 blocks|Vanilla stat BLOCK_PLACED|Longer reach and faster placement|ATTR_INTERACTION_RANGE|+1.5 block interaction range|6|Easy|Planned|You see the finished thing before the first block.
+first_light|First Light|Meta|Legendary|Founding|50|No|-|Be one of the first 50 players ever to join this world|Server ledger claim on first join|SIGNATURE - golden nameplate and a numbered founder entry in the ledger|ATTR_MAX_HEALTH ATTR_LUCK|+2 max health and +1 luck|3 exempt|Easy|Planned|Someone had to turn on the lights. Fifty of you were here to see it.
+collector|Collector|Meta|Uncommon|Unlimited|-|No|-|Earn 10 titles|Owned title count|SLOT AND BUDGET EXEMPT - raises your equipped power budget|CUSTOM|+2 power budget|0 exempt|Medium|Proposed|Ten is where a habit starts.
+archivist|Archivist|Meta|Epic|Unlimited|-|No|-|Earn 25 titles|Owned title count|SLOT AND BUDGET EXEMPT - raises your equipped power budget|CUSTOM|+4 power budget|0 exempt|Medium|Proposed|You keep the list. The list keeps you.
+chronicler|Chronicler|Meta|Legendary|Unlimited|-|No|-|Earn 50 titles|Owned title count|SLOT AND BUDGET EXEMPT - raises your budget and marks your nameplate|CUSTOM|+6 power budget and a nameplate flourish|0 exempt|Medium|Proposed|Half the world's deeds have your name on them.
+the_unrivaled|The Unrivaled|Meta|Unique|Contested|1|No|-|Hold the most wins in agreed player-vs-player duels on the server|Duel ledger - both players opt in to a duel and the server records the winner|SIGNATURE - gold name on the tab list. Transfers the moment someone passes your win count.|CUSTOM ATTR_ATTACK_DAMAGE|Gold tab-list name and +10% damage|3 exempt|Hard|Proposed|Someone is always counting.
+the_generous|The Generous|Social|Rare|Unlimited|-|Yes|Something you gave away is still being counted.|Drop 100 items that another player picks up|Item pickup attribution|Being kind pays|XP_MULT ATTR_LUCK|+25% XP and +1 luck|5|Hard|Planned|Nobody told you it counted.
+pacifist|Pacifist|Meta|Legendary|Limited|3|Yes|Fifteen days is a long time to keep your hands clean.|Reach 15 in-game days having killed no mob or player|Kill stat sum must stay zero|SIGNATURE - hostile mobs are slow to notice you|CUSTOM ATTR_MAX_HEALTH|-40% mob detection range and +8 max health|4 exempt|Hard|Planned|You just walked past all of it.
+the_hollow|The Hollow|Secret|Epic|Unlimited|-|Yes|The respawn screen knows you by name.|Die 100 times|Vanilla stat DEATHS|Death costs less|CUSTOM|Keep 50% of XP on death and respawn with Absorption|7|Medium|Planned|You know the way back now.
+moonstruck|Moonstruck|Secret|Rare|Unlimited|-|Yes|The moon keeps a ledger of quiet nights.|Sleep through 25 nights without ever sleeping through a thunderstorm|Sleep event with weather check|Stronger at night|ATTR_ATTACK_DAMAGE|+15% damage between dusk and dawn|6|Medium|Planned|The moon has opinions about you.
+the_drowned_king|The Drowned King|Secret|Unique|Unique|1|Yes|The temple has a throne. Its rules are drowning ones.|Kill an Elder Guardian while under Mining Fatigue III and drowning|Compound condition on kill event|SIGNATURE - permanent water breathing. Utility not combat power.|CUSTOM ATTR_WATER_MOVE_EFF|Water breathing and +50% swim speed|4 exempt|Hard|Planned|The temple has a new tenant.
+warden_touched|Warden Touched|Secret|Unique|Unique|1|Yes|It let you go. It keeps letting you go.|Escape a Warden after it has fully aggroed on you 10 times|Warden aggro/escape tracker|SIGNATURE - sculk sensors and shriekers never detect you|CUSTOM|Sculk immunity and +15% damage from stealth|4 exempt|Hard|Planned|It let you go. Nine times you thought that was luck.
+</script>
+<script id="csv-effects" type="text/plain">
+Effect Type|Implementation Hook|Attribute ID on 1.20.1 (VERIFY in-game)|Example Magnitude|Point Cost|Difficulty|Notes
+ATTR_MAX_HEALTH|AttributeModifier ADDITION|minecraft:generic.max_health|+4.0 (2 hearts)|4|Easy|Remove modifier on unequip or players keep the hearts
+ATTR_ARMOR|AttributeModifier ADDITION|minecraft:generic.armor|+2.0|3|Easy|Flat armor points - very strong early
+ATTR_ARMOR_TOUGHNESS|AttributeModifier ADDITION|minecraft:generic.armor_toughness|+2.0|3|Easy|Reduces high-damage-hit scaling
+ATTR_KNOCKBACK_RESIST|AttributeModifier ADDITION|minecraft:generic.knockback_resistance|+0.2 (20%)|2|Easy|1.0 = immune. Keep low
+ATTR_ATTACK_DAMAGE|AttributeModifier MULTIPLY_TOTAL|minecraft:generic.attack_damage|+10%|4|Easy|Multiplied applies after weapon damage
+ATTR_ATTACK_SPEED|AttributeModifier MULTIPLY_TOTAL|minecraft:generic.attack_speed|+10%|4|Easy|Big DPS impact - be conservative
+ATTR_MOVEMENT_SPEED|AttributeModifier MULTIPLY_TOTAL|minecraft:generic.movement_speed|+5%|3|Easy|Above +20% feels broken and breaks some anti-cheat
+ATTR_LUCK|AttributeModifier ADDITION|minecraft:generic.luck|+1.0|3|Easy|Only affects loot tables with quality/bonus_rolls - fishing, chests
+ATTR_BLOCK_BREAK_SPEED|AttributeModifier MULTIPLY_TOTAL|NOT IN 1.20.1 - use Forge PlayerEvent.BreakSpeed|+15%|3|Medium|Global mining speed multiplier
+ATTR_MINING_EFFICIENCY|AttributeModifier ADDITION|NOT IN 1.20.1 - fold into the same BreakSpeed hook|+2.0|3|Medium|Behaves like the Efficiency enchant term
+ATTR_SUBMERGED_MINING|AttributeModifier ADDITION|NOT IN 1.20.1 - BreakSpeed hook - check isEyeInFluid|+0.5|1|Medium|Removes the underwater mining penalty
+ATTR_SNEAKING_SPEED|AttributeModifier MULTIPLY_TOTAL|NOT IN 1.20.1 - no clean hook - CUT for v1|+30%|1|Medium|Quality of life - cheap
+ATTR_STEP_HEIGHT|AttributeModifier ADDITION|forge:step_height_addition - Forge-added - VERIFY|+0.5|2|Easy|Walk up full blocks
+ATTR_SAFE_FALL_DISTANCE|AttributeModifier ADDITION|NOT IN 1.20.1 - LivingFallEvent - raise the threshold|+3.0|2|Medium|Fall damage starts later
+ATTR_FALL_DAMAGE_MULT|AttributeModifier MULTIPLY_TOTAL|NOT IN 1.20.1 - LivingFallEvent damageMultiplier|-25%|2|Medium|Negative value = less damage
+ATTR_OXYGEN_BONUS|AttributeModifier ADDITION|NOT IN 1.20.1 - tick hook on air supply|+2.0|2|Medium|Longer breath underwater
+ATTR_BURNING_TIME|AttributeModifier MULTIPLY_TOTAL|NOT IN 1.20.1 - tick hook trimming remaining fire ticks|-50%|2|Medium|Shorter time on fire
+ATTR_EXPLOSION_KB_RESIST|AttributeModifier ADDITION|NOT IN 1.20.1 - no clean hook - CUT for v1|+0.5|2|Medium|Creeper/TNT knockback only - not damage
+ATTR_INTERACTION_RANGE|AttributeModifier ADDITION|forge:block_reach / forge:entity_reach - Forge-added - VERIFY|+1.0|3|Easy|Very noticeable in PvP - gate behind high rarity
+ATTR_JUMP_STRENGTH|AttributeModifier MULTIPLY_TOTAL|NOT IN 1.20.1 for players - horse only - use LivingJumpEvent|+10%|3|Medium|Pair with safe_fall_distance or players die to it
+ATTR_MAX_ABSORPTION|AttributeModifier ADDITION|minecraft:generic.max_absorption - VERIFY it exists on 1.20.1|+4.0|4|Medium|Needs a refill source or it does nothing
+ATTR_WATER_MOVE_EFF|AttributeModifier ADDITION|forge:swim_speed - Forge-added - VERIFY|+0.5|2|Easy|Depth Strider equivalent
+ATTR_GRAVITY|AttributeModifier MULTIPLY_TOTAL|forge:entity_gravity - Forge-added - VERIFY|-10%|3|Medium|Feels odd - test heavily before shipping
+DMG_VS_TYPE|Damage event - check target entity type tag|n/a|+15% vs undead|4|Medium|Forge LivingHurtEvent (pre-armor) or LivingDamageEvent (post-armor). Use entity type TAGS not hardcoded types
+DMG_RESIST_FROM_TYPE|Damage event - check source entity type|n/a|-20% from creepers|4|Medium|Also match DamageSource types for explosion/fire/projectile
+DMG_VS_DAMAGE_SOURCE|Damage event - check DamageSource tag|n/a|-30% explosion damage|3|Medium|Cleaner than entity checks for environmental damage
+TOOL_TIER_HAND|Break-speed event + correct-tool-for-drops event|n/a|Bare hand counts as stone tier|5|Hard|TWO hooks. Speed alone still drops nothing - you must also override the drop check
+TOOL_PROFICIENCY|Break-speed event scoped to a tool tag|n/a|+25% speed with axes|3|Medium|Scope by item tag so modded tools benefit too
+POTION_DURATION_MULT|Effect-added event - rebuild the MobEffectInstance|n/a|+25% duration|4|Medium|Only extend beneficial effects. Watch for infinite re-application loops
+POTION_AMPLIFIER_BOOST|Effect-added event|n/a|+1 amplifier on self-brewed potions|6|Hard|Amplifier jumps are huge. Restrict to specific effects
+XP_MULT|XP pickup / drop event|n/a|+20% XP|2|Easy|Popular and safe
+PASSIVE_EFFECT|Re-apply a hidden MobEffectInstance every 40 ticks|n/a|Night Vision while below y=0|3|Medium|Use ambient+hidden particles or it looks terrible
+ON_KILL_PROC|Death event|n/a|10% chance to restore 1 heart on kill|4|Medium|Add an internal cooldown
+ON_HURT_PROC|Damage event|n/a|Below 30% HP gain Strength I for 5s|5|Medium|Cooldown mandatory
+ON_MINE_PROC|Block break event|n/a|3% chance to double ore drops|5|Medium|Respect Silk Touch and fortune. Do not double-fire on multi-block breaks
+LOOT_LUCK_CONTEXT|Loot context modifier|n/a|+1 effective luck on chest loot|4|Hard|Requires a global loot modifier
+ENCHANT_INTRINSIC|Attack event - apply an enchantment's effect as if the held weapon carried it|n/a|Fire Aspect I on any melee weapon|4|Medium|Apply the EFFECT - never write the enchantment onto the item or it survives being dropped or traded. Do not stack with a real Fire Aspect on the same weapon - take the higher level
+ACTIVE_ABILITY|Keybind or use event plus a per-player server-side cooldown|n/a|Throw a conjured ender pearl on a 5 second cooldown|6|Hard|THE FIRST ACTIVATED ABILITY IN THE MOD. Needs a keybind - a cooldown readout on the HUD - and cooldown validation on the server. Never trust a client-reported cooldown
+CUSTOM|Bespoke code|n/a|Varies|Varies|Hard|Reserve for Legendary/Mythic only - each one is a maintenance burden
+|||||||
+IMPORTANT|Attribute IDs are now written for 1.20.1 - note the generic. prefix that 1.21 later removed - and Operation is the old ADDITION / MULTIPLY_BASE / MULTIPLY_TOTAL enum. Print the full attribute registry in-game as the Phase 0 task says and correct anything marked VERIFY.||||||
+IMPORTANT|On 1.20.1 a modifier is keyed by UUID - not by ResourceLocation. Store a ResourceLocation-shaped id in the title JSON and derive the UUID from it with UUID.nameUUIDFromBytes so the content files survive the port untouched. Reusing one id across two titles makes the second silently overwrite the first.||||||
+IMPORTANT|Always remove modifiers on unequip AND on player logout-save. Orphaned max_health modifiers are the classic way this kind of mod corrupts a save.||||||
+IMPORTANT|COST OF THE 1.20.1 DECISION - 12 of the 23 ATTR_ effects below have no vanilla attribute on 1.20.1. They were all added in 1.20.5 / 1.21. Each is now an event hook instead of a free attribute modifier - more code - more to test - and more to delete at port time when the real attribute finally exists.||||||
+IMPORTANT|Re-cost the affected effects on the Balance Model sheet. Point costs were set assuming these were cheap attribute modifiers. An event-hook implementation does not change how strong the effect is - but it does change whether it is worth building for v1. ATTR_SNEAKING_SPEED and ATTR_EXPLOSION_KB_RESIST are the two to cut.||||||
+</script>
+<script id="csv-rarity" type="text/plain">
+Rarity|Hex Color|MC Format|Starter Roll Weight|Power Budget|Typical Unlock Effort|Count in Sheet|UI Treatment
+Common|AAAAAA|gray|50|1-4|Minutes to an hour of normal play|47|Plain text
+Uncommon|55FF55|green|28|3-4|A full session of focused play|16|Plain text
+Rare|55FFFF|aqua|14|5-6|Several sessions or a boss/structure|16|Subtle shimmer on hover
+Epic|FF55FF|light_purple|6|7-8|Long-term grind or a hard challenge|10|Animated gradient border
+Legendary|FFAA00|gold|2|9-10|Server-notable achievement|7|Full-card glow + server broadcast on earn
+Mythic|FF5555|red|0|11-13|Once-per-world class event|2|Screen flash + title card + broadcast
+Unique|00AAAA|dark_aqua|0|5 exempt|A one-of-a-kind world event or a closed founder race|5|Solid teal nameplate + title card + broadcast + a permanent numbered entry in the server ledger
+|||||||
+Scarcity Type|Meaning|Max Holders|On Holder Death|On Holder Inactivity|On Server Reset|Recommended Use
+Unlimited|Anyone who meets the condition gets it|Unbounded|Kept|Kept|Kept|Default for 90% of titles
+Limited|Only N players on the server may hold it at once|2-10|Kept|Kept - NEVER released|Released|Prestige grind titles. An inactive holder keeps the slot forever - see the never-revoked rule below
+Unique|Exactly one holder for the life of the world|1|Kept|Kept|Released|First-to-do-X achievements
+Founding|The first N players ever to meet the condition claim it - then it is closed forever and never reopens|10-50 - set per title|Kept|Kept - NEVER released|Released|Founder titles and first-N-to-achieve races. Unlike Limited this is not a rotating pool - being early is a historical fact and cannot be taken back
+Contested|Unique but transferable - a new claimant takes it from the holder|1|Kept|Kept|Released|THE ONLY REVOCABLE SCARCITY TYPE. Lost only when another player beats the holder's score - never on death and never on inactivity. Used by The Unrivaled alone
+|||||||
+Note|Starter Roll Weight is the relative chance of that rarity in the free title granted on first join. Weights sum to 100 across Common..Legendary. Mythic and Unique are never rolled - they are only ever earned.||||||
+Note|DECIDED - TITLES ARE NEVER REVOKED. Once earned a title is yours permanently - it survives death - inactivity - and dimension change. The sole exception is the Contested type - currently The Unrivaled alone - which passes to whoever beats the holder's score.||||||
+Note|DECIDED - Unique IS a rarity - the top of the ladder above Mythic. It marks a title that can never be earned again once claimed. It does not carry a point range like the other tiers - a Unique title is budget-exempt and capped at 5 points of raw stats like every scarce title - so its rarity is expressed as a signature ability and public prestige.||||||
+Note|Unique is the one word that appears in BOTH the Rarity column and the Scarcity column and they mean different things. Rarity Unique = irreplaceable - the client paints it dark_aqua and broadcasts it. Scarcity Unique = exactly one holder. A title can be one without the other - Monster Slayer is Rarity Unique with Scarcity Founding because ten players may each claim it once and then it closes forever. Read Scarcity for the holder count and Rarity for the presentation.||||||
+Note|DECIDED - Secret is NOT a rarity. It is a Yes/No flag on the Titles sheet that is orthogonal to rarity. A secret title has a normal rarity and normal power - the player just does not know it exists until it fires. 11 titles are currently flagged secret.||||||
+Note|Secret titles carry a Hint string on the Titles sheet. The Titles screen shows ??? plus the hint once partial progress is detected - see the UI Spec sheet - so they stay discoverable instead of becoming wiki chores.||||||
+Note|Common runs 1-4 points rather than 1-2. Single-mob damage titles sit at 2 and the broad-tag or max-health commons sit at 3-4. Ten commons equipped is roughly 25-30 points - still under the 40 cap by design.||||||
+Note|Power Budget is a soft cap. Sum the point costs on the Effect Catalog sheet and keep a title at or under its rarity budget.||||||
+Note|DECIDED - a player equips up to 10 titles at once plus every Unique and Limited title they hold. Unique and Limited titles are budget-exempt. See the Balance Model sheet.||||||
+Note|DECIDED - equipped titles are capped at a 40-point total budget. Scarce titles are exempt from the budget but capped at 5 points of raw stats each.||||||
+</script>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- parse the pipe-delimited sheets embedded above ----------
+  var raw = function (id) { return (document.getElementById(id).textContent || "").trim(); };
+  function rows(text) {
+    var lines = text.split(/\r?\n/).filter(function (l) { return l.trim() !== ""; });
+    var head = lines.shift().split("|");
+    return lines.map(function (l) {
+      var c = l.split("|"), o = {};
+      head.forEach(function (h, i) { o[h.trim()] = (c[i] || "").trim(); });
+      return o;
+    });
+  }
+  var TITLES = rows(raw("csv-titles")).filter(function (t) { return t.ID; });
+
+  // Effect catalog: drop the trailing spacer + IMPORTANT note rows.
+  var EFFECTS = rows(raw("csv-effects")).filter(function (e) {
+    return e["Effect Type"] && e["Effect Type"] !== "IMPORTANT";
+  });
+
+  // The rarity sheet stacks three blocks under one header. Slice them apart by hand.
+  var rsLines = raw("csv-rarity").split(/\r?\n/);
+  function block(startsWith) {
+    var i = rsLines.findIndex(function (l) { return l.indexOf(startsWith) === 0; });
+    if (i < 0) return [];
+    var out = [rsLines[i]];
+    for (var j = i + 1; j < rsLines.length; j++) {
+      var l = rsLines[j];
+      if (!l.replace(/\|/g, "").trim()) break;
+      if (/^(Scarcity Type|Note)\|/.test(l)) break;
+      out.push(l);
+    }
+    return rows(out.join("\n"));
+  }
+  var RARITIES = block("Rarity|");
+  var SCARCITIES = block("Scarcity Type|");
+
+  var ORDER = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Unique"];
+  var SLUG = function (s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-"); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  };
+  var blank = function (v) { return !v || v === "-"; };
+
+  // Power Budget reads like "7" or "4 exempt".
+  function budget(t) {
+    var m = /(-?\d+)/.exec(t["Power Budget"] || "");
+    return { pts: m ? parseInt(m[1], 10) : 0, exempt: /exempt/i.test(t["Power Budget"] || "") };
+  }
+
+  // ---------- masthead figures ----------
+  var secretCount = TITLES.filter(function (t) { return t.Secret === "Yes"; }).length;
+  var scarceCount = TITLES.filter(function (t) { return t.Scarcity !== "Unlimited"; }).length;
+  var cats = Array.from(new Set(TITLES.map(function (t) { return t.Category; }))).sort();
+  var figs = [
+    [TITLES.length, "titles defined"],
+    [cats.length, "categories"],
+    ["40", "point equip budget"],
+    ["10", "equip slots"],
+    [scarceCount, "scarce (slot-exempt)"],
+    [secretCount, "secret"]
+  ];
+  document.getElementById("figs").innerHTML = figs.map(function (f) {
+    return '<div class="fig"><div class="n">' + esc(f[0]) + '</div><div class="l">' + esc(f[1]) + "</div></div>";
+  }).join("");
+
+  // ---------- rarity distribution doubles as the rarity filter ----------
+  var counts = {};
+  ORDER.forEach(function (r) { counts[r] = 0; });
+  TITLES.forEach(function (t) { if (counts[t.Rarity] != null) counts[t.Rarity]++; });
+
+  var active = new Set(); // empty === no rarity filter
+  var bar = document.getElementById("bar"), legend = document.getElementById("legend");
+
+  bar.innerHTML = ORDER.map(function (r) {
+    return '<button type="button" data-r="' + r + '" title="' + r + " \u2014 " + counts[r] + ' titles" ' +
+      'aria-label="Filter to ' + r + '" style="flex:' + counts[r] + ';background:var(--p-' + SLUG(r) + ')"></button>';
+  }).join("");
+
+  legend.innerHTML = ORDER.map(function (r) {
+    var meta = RARITIES.filter(function (x) { return x.Rarity === r; })[0] || {};
+    return '<button type="button" class="lg" data-r="' + r + '">' +
+      '<span class="sw" style="background:var(--p-' + SLUG(r) + ')"></span>' +
+      '<span><span class="nm" style="color:var(--t-' + SLUG(r) + ')">' + r + "</span><br>" +
+      '<span class="ct">' + counts[r] + " \u00b7 " + esc(meta["Power Budget"] || "") + " pts</span></span></button>";
+  }).join("");
+
+  function toggleRarity(r) {
+    if (active.has(r)) active.delete(r); else active.add(r);
+    paintRarityControls();
+    render();
+  }
+  function paintRarityControls() {
+    var none = active.size === 0;
+    [].forEach.call(bar.children, function (b) { b.classList.toggle("off", !none && !active.has(b.dataset.r)); });
+    [].forEach.call(legend.children, function (b) { b.classList.toggle("off", !none && !active.has(b.dataset.r)); });
+  }
+  bar.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) toggleRarity(b.dataset.r); });
+  legend.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) toggleRarity(b.dataset.r); });
+
+  // ---------- selects ----------
+  function fill(sel, label, values) {
+    sel.innerHTML = '<option value="">' + label + "</option>" +
+      values.map(function (v) { return '<option value="' + esc(v) + '">' + esc(v) + "</option>"; }).join("");
+  }
+  var elCat = document.getElementById("cat"), elScar = document.getElementById("scar");
+  fill(elCat, "All categories", cats);
+  fill(elScar, "All scarcities", Array.from(new Set(TITLES.map(function (t) { return t.Scarcity; }))).sort());
+
+  // ---------- card ----------
+  function card(t) {
+    var slug = SLUG(t.Rarity), b = budget(t), scarce = t.Scarcity !== "Unlimited";
+    var cap = b.exempt ? 5 : 40;
+    var pct = Math.max(0, Math.min(100, (b.pts / cap) * 100));
+
+    var effs = (t["Effect Types"] || "").split(/\s+/).filter(Boolean).map(function (code) {
+      var known = EFFECTS.some(function (e) { return e["Effect Type"] === code; });
+      return known
+        ? '<a class="eff" href="#eff-' + esc(code) + '">' + esc(code) + "</a>"
+        : '<span class="eff">' + esc(code) + "</span>";
+    }).join("");
+
+    var h = [];
+    h.push('<article class="card' + (t.Secret === "Yes" ? " is-secret" : "") +
+      '" style="--stripe:var(--p-' + slug + ');--tone:var(--t-' + slug + ')">');
+
+    h.push('<div class="chead"><h3 class="tname">' + esc(t["Display Name"]) +
+      '</h3><span class="tid">' + esc(t.ID) + "</span></div>");
+
+    h.push('<div class="chips"><span class="chip rar">' + esc(t.Rarity) + "</span>" +
+      '<span class="chip">' + esc(t.Category) + "</span>" +
+      (scarce ? '<span class="chip scarce">' + esc(t.Scarcity) +
+        (blank(t["Max Holders"]) ? "" : " \u00b7 " + esc(t["Max Holders"])) + "</span>" : "") +
+      (t.Secret === "Yes" ? '<span class="chip sec">Secret</span>' : "") + "</div>");
+
+    h.push('<div class="row"><span class="k">Earn by</span><span class="v">' + esc(t["How to Obtain"]) + "</span></div>");
+    h.push('<div class="row"><span class="k">Effect</span><span class="v"><b>' + esc(t["Effect Summary"]) +
+      '</b><br><span class="mag">' + esc(t.Magnitude) + "</span></span></div>");
+
+    if (t.Secret === "Yes" && !blank(t.Hint)) {
+      h.push('<div class="row"><span class="k">In-game hint</span><span class="v hint">' + esc(t.Hint) + "</span></div>");
+    }
+
+    h.push('<div class="budget"><span class="meter"><i style="width:' + pct.toFixed(1) + '%"></i></span>' +
+      '<span class="bl">' + (b.exempt
+        ? b.pts + " / 5 raw stats \u00b7 budget-exempt"
+        : b.pts + " / 40 budget") + "</span></div>");
+
+    h.push('<details class="spec"><summary>Spec</summary><div class="specbody">');
+    h.push('<div class="row"><span class="k">Effect&nbsp;types</span><span class="v">' + effs + "</span></div>");
+    h.push('<div class="row"><span class="k">Tracked by</span><span class="v">' + esc(t["Progress Source"]) + "</span></div>");
+    h.push('<div class="row"><span class="k">Build</span><span class="v">' + esc(t["Impl Complexity"]) +
+      " to implement \u00b7 " + esc(t.Status) + "</span></div>");
+    h.push("</div></details>");
+
+    if (!blank(t["Flavor Text"])) h.push('<p class="flavor">' + esc(t["Flavor Text"]) + "</p>");
+    h.push("</article>");
+    return h.join("");
+  }
+
+  // ---------- render ----------
+  var grid = document.getElementById("grid"), empty = document.getElementById("empty"),
+      countEl = document.getElementById("count"), elQ = document.getElementById("q"),
+      elSec = document.getElementById("sec"), elSort = document.getElementById("sort"),
+      secTog = document.getElementById("sectog");
+
+  function render() {
+    var q = elQ.value.trim().toLowerCase();
+    var list = TITLES.filter(function (t) {
+      if (active.size && !active.has(t.Rarity)) return false;
+      if (elCat.value && t.Category !== elCat.value) return false;
+      if (elScar.value && t.Scarcity !== elScar.value) return false;
+      if (elSec.checked && t.Secret !== "Yes") return false;
+      if (!q) return true;
+      return Object.keys(t).some(function (k) { return (t[k] || "").toLowerCase().indexOf(q) > -1; });
+    });
+
+    var by = elSort.value;
+    list.sort(function (a, b) {
+      if (by === "name") return a["Display Name"].localeCompare(b["Display Name"]);
+      if (by === "budget") return budget(b).pts - budget(a).pts || a["Display Name"].localeCompare(b["Display Name"]);
+      if (by === "cat") {
+        return a.Category.localeCompare(b.Category) ||
+          ORDER.indexOf(b.Rarity) - ORDER.indexOf(a.Rarity) ||
+          a["Display Name"].localeCompare(b["Display Name"]);
+      }
+      return ORDER.indexOf(b.Rarity) - ORDER.indexOf(a.Rarity) ||
+        a.Category.localeCompare(b.Category) ||
+        a["Display Name"].localeCompare(b["Display Name"]);
+    });
+
+    grid.innerHTML = list.map(card).join("");
+    empty.hidden = list.length > 0;
+    countEl.innerHTML = "<b>" + list.length + "</b> of " + TITLES.length + " titles";
+    secTog.classList.toggle("on", elSec.checked);
+  }
+
+  [elQ, elCat, elScar, elSec, elSort].forEach(function (el) {
+    el.addEventListener(el === elQ ? "input" : "change", render);
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    elQ.value = ""; elCat.value = ""; elScar.value = ""; elSec.checked = false;
+    elSort.value = "rarity"; active.clear(); paintRarityControls(); render();
+  });
+
+  // ---------- reference tables ----------
+  document.getElementById("rartbl").innerHTML =
+    "<thead><tr><th>Rarity</th><th>Hex</th><th>Chat format</th><th>Count</th><th>Power budget</th>" +
+    "<th>Starter roll</th><th>Typical unlock effort</th><th>UI treatment</th></tr></thead><tbody>" +
+    RARITIES.map(function (r) {
+      var s = SLUG(r.Rarity);
+      return "<tr><td><span class='swcell'><i style='background:var(--p-" + s + ")'></i>" +
+        "<b style='color:var(--t-" + s + ")'>" + esc(r.Rarity) + "</b></span></td>" +
+        "<td class='code'>#" + esc(r["Hex Color"]) + "</td>" +
+        "<td class='code'>" + esc(r["MC Format"]) + "</td>" +
+        "<td class='code'>" + esc(r["Count in Sheet"]) + "</td>" +
+        "<td class='code'>" + esc(r["Power Budget"]) + "</td>" +
+        "<td class='code'>" + esc(r["Starter Roll Weight"]) + "</td>" +
+        "<td>" + esc(r["Typical Unlock Effort"]) + "</td>" +
+        "<td>" + esc(r["UI Treatment"]) + "</td></tr>";
+    }).join("") + "</tbody>";
+
+  document.getElementById("scartbl").innerHTML =
+    "<thead><tr><th>Scarcity</th><th>Meaning</th><th>Max holders</th><th>On holder death</th>" +
+    "<th>On inactivity</th><th>On server reset</th><th>Recommended use</th></tr></thead><tbody>" +
+    SCARCITIES.map(function (s) {
+      return "<tr><td class='code'>" + esc(s["Scarcity Type"]) + "</td><td>" + esc(s.Meaning) + "</td>" +
+        "<td class='code'>" + esc(s["Max Holders"]) + "</td><td>" + esc(s["On Holder Death"]) + "</td>" +
+        "<td>" + esc(s["On Holder Inactivity"]) + "</td><td>" + esc(s["On Server Reset"]) + "</td>" +
+        "<td>" + esc(s["Recommended Use"]) + "</td></tr>";
+    }).join("") + "</tbody>";
+
+  var used = {};
+  TITLES.forEach(function (t) {
+    (t["Effect Types"] || "").split(/\s+/).filter(Boolean).forEach(function (c) { used[c] = (used[c] || 0) + 1; });
+  });
+  document.getElementById("efftbl").innerHTML =
+    "<thead><tr><th>Effect type</th><th>Used by</th><th>Implementation hook</th>" +
+    "<th>Attribute ID on 1.20.1</th><th>Cost</th><th>Difficulty</th><th>Notes</th></tr></thead><tbody>" +
+    EFFECTS.map(function (e) {
+      var code = e["Effect Type"], attr = e["Attribute ID on 1.20.1 (VERIFY in-game)"] || "";
+      return "<tr id='eff-" + esc(code) + "'><td class='code'>" + esc(code) + "</td>" +
+        "<td class='code'>" + (used[code] ? used[code] + "\u00d7" : "\u2014") + "</td>" +
+        "<td>" + esc(e["Implementation Hook"]) + "</td>" +
+        "<td class='code" + (/NOT IN 1\.20\.1/.test(attr) ? " warn" : "") + "'>" + esc(attr) + "</td>" +
+        "<td class='code'>" + esc(e["Point Cost"]) + "</td><td>" + esc(e.Difficulty) + "</td>" +
+        "<td>" + esc(e.Notes) + "</td></tr>";
+    }).join("") + "</tbody>";
+
+  paintRarityControls();
+  render();
+})();
+</script>
