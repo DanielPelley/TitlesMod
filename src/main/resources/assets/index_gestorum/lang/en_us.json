@@ -1,0 +1,15 @@
+{
+  "key.categories.index_gestorum": "Index Gestorum",
+  "key.index_gestorum.open_titles": "Open Titles",
+  "screen.index_gestorum.titles": "Titles",
+  "screen.index_gestorum.equipped": "Equipped",
+  "screen.index_gestorum.all_titles": "All Titles",
+  "screen.index_gestorum.empty_slot": "(empty)",
+  "screen.index_gestorum.always_active": "Always Active (no slot)",
+  "screen.index_gestorum.shelf_empty": "(none yet)",
+  "screen.index_gestorum.shelf_more": "+%s more",
+  "screen.index_gestorum.select_prompt": "Click a title to see its details",
+  "screen.index_gestorum.bonus": "Bonus:",
+  "screen.index_gestorum.how_to_earn": "How to earn:",
+  "screen.index_gestorum.hint": "Hint:"
+}
