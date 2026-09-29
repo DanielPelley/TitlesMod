@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,13 +67,39 @@ public class TitlesScreen extends Screen
             new SampleTitle("Monster Slayer", Rarity.UNIQUE, "Nothing in the dark is new to you anymore.",
                     "+20% damage vs all hostile mobs. Does nothing in PvP.",
                     "Be one of the first 10 players to kill 150 of every standard hostile mob",
-                    "Eradication of these fiends is the only solution..."));
+                    "Eradication of these fiends is the only solution..."),
+            new SampleTitle("The Immortal", Rarity.MYTHIC, "Death has stopped filing the paperwork.",
+                    "One free cheat of death per in-game day (totem-style revive and +2 max health)",
+                    "Survive 150 in-game days without a single death", null),
+            new SampleTitle("Grand Alchemist", Rarity.LEGENDARY, "You stopped reading the recipes years ago.",
+                    "Your brews come out a tier stronger (+1 amplifier on self-brewed potions)",
+                    "Brew every potion type in the game", null),
+            new SampleTitle("First Light", Rarity.LEGENDARY, "Someone had to turn on the lights. Fifty of you were here to see it.",
+                    "Golden nameplate and a numbered founder entry in the ledger (+2 max health and +1 luck)",
+                    "Be one of the first 50 players ever to join this world", null),
+            new SampleTitle("The Unrivaled", Rarity.UNIQUE, "Someone is always counting.",
+                    "Gold name on the tab list (+10% damage). Passes to whoever beats your win count.",
+                    "Hold the most wins in agreed player-vs-player duels on the server", null),
+            new SampleTitle("Pacifist", Rarity.LEGENDARY, "You just walked past all of it.",
+                    "Hostile mobs are slow to notice you (-40% mob detection range and +8 max health)",
+                    "Reach 15 in-game days having killed no mob or player",
+                    "Fifteen days is a long time to keep your hands clean."),
+            new SampleTitle("The Drowned King", Rarity.UNIQUE, "The temple has a new tenant.",
+                    "Permanent water breathing (+50% swim speed)",
+                    "Kill an Elder Guardian while under Mining Fatigue III and drowning",
+                    "The temple has a throne. Its rules are drowning ones."),
+            new SampleTitle("Warden Touched", Rarity.UNIQUE, "It let you go. Nine times you thought that was luck.",
+                    "Sculk sensors and shriekers never detect you (+15% damage from stealth)",
+                    "Escape a Warden after it has fully aggroed on you 10 times",
+                    "It let you go. It keeps letting you go."));
 
     private static final List<SampleTitle> EQUIPPED = List.of(
             ALL_TITLES.get(12), ALL_TITLES.get(9), ALL_TITLES.get(7), ALL_TITLES.get(0));
 
     // Unique and Limited titles: always active, and they use no slot and no budget.
-    private static final List<SampleTitle> ALWAYS_ACTIVE = List.of(ALL_TITLES.get(14), ALL_TITLES.get(15), ALL_TITLES.get(11));
+    private static final List<SampleTitle> ALWAYS_ACTIVE = List.of(
+            ALL_TITLES.get(14), ALL_TITLES.get(15), ALL_TITLES.get(11), ALL_TITLES.get(16), ALL_TITLES.get(17),
+            ALL_TITLES.get(18), ALL_TITLES.get(19), ALL_TITLES.get(20), ALL_TITLES.get(21), ALL_TITLES.get(22));
 
     // Theme: translucent dark blue frame with darker insets, light blue accents.
     private static final int FRAME_BORDER = 0xE00A1A2E;
@@ -88,6 +115,7 @@ public class TitlesScreen extends Screen
     private static final int HEADING_TEXT = ACCENT;
     private static final int MUTED_TEXT = 0x6F8FA8;
 
+
     private static final int SLOT_COUNT = 10;
     private static final int PANEL_WIDTH = 320;
     private static final int PADDING = 8;
@@ -95,10 +123,14 @@ public class TitlesScreen extends Screen
     private static final int LINE_HEIGHT = 10;
     private static final int HEADER_HEIGHT = 32;
     private static final int SHELF_LABEL_HEIGHT = 14;
-    private static final int DETAIL_HEIGHT = 52;
+    // The shelf grows up to this many rows, then scrolls. Matches the endgame veteran in 10-Balance-Model.csv.
+    private static final int MAX_SHELF_ROWS = 6;
     // Panel height before any shelf rows are added.
-    private static final int BASE_HEIGHT = HEADER_HEIGHT + SLOT_COUNT * ROW_HEIGHT + SHELF_LABEL_HEIGHT + 4 + DETAIL_HEIGHT + PADDING;
+    private static final int BASE_HEIGHT = HEADER_HEIGHT + SLOT_COUNT * ROW_HEIGHT + SHELF_LABEL_HEIGHT + PADDING;
     private static final int COLUMN_WIDTH = (PANEL_WIDTH - PADDING * 3) / 2;
+    private static final int POPUP_WIDTH = 260;
+    private static final int POPUP_PADDING = 7;
+    private static final int SCREEN_PADDING = 4;
 
     // Clickable rows from the last frame, so clicks hit exactly what was drawn.
     private record RowHit(int x, int y, int w, SampleTitle title) {}
@@ -107,13 +139,21 @@ public class TitlesScreen extends Screen
     private int left;
     private int top;
     private int scrollOffset;
+    private int shelfScrollOffset;
+    // The title whose details popup is open, or null.
     private SampleTitle selected;
 
-    // The shelf grows with the number of always-active titles, up to what fits on screen.
+    // The shelf grows with the number of always-active titles, up to what fits on screen,
+    // and scrolls past that.
     private int shelfRows;
     private int listHeight;
     private int visibleRows;
     private int panelHeight;
+
+    // Last drawn popup bounds, for click handling.
+    private int popupX;
+    private int popupY;
+    private int popupH;
 
     public TitlesScreen()
     {
@@ -124,7 +164,7 @@ public class TitlesScreen extends Screen
     protected void init()
     {
         left = (width - PANEL_WIDTH) / 2;
-        int maxShelfRows = Math.max(1, (height - BASE_HEIGHT) / ROW_HEIGHT);
+        int maxShelfRows = Mth.clamp((height - BASE_HEIGHT - SCREEN_PADDING) / ROW_HEIGHT, 1, MAX_SHELF_ROWS);
         shelfRows = Mth.clamp(ALWAYS_ACTIVE.size(), 1, maxShelfRows);
         listHeight = SLOT_COUNT * ROW_HEIGHT + SHELF_LABEL_HEIGHT + shelfRows * ROW_HEIGHT;
         visibleRows = listHeight / ROW_HEIGHT;
@@ -147,9 +187,19 @@ public class TitlesScreen extends Screen
         return top + HEADER_HEIGHT;
     }
 
+    private int shelfTop()
+    {
+        return listTop() + SLOT_COUNT * ROW_HEIGHT + SHELF_LABEL_HEIGHT;
+    }
+
     private int listWidth()
     {
         return maxScroll() > 0 ? COLUMN_WIDTH - 5 : COLUMN_WIDTH;
+    }
+
+    private int shelfWidth()
+    {
+        return maxShelfScroll() > 0 ? COLUMN_WIDTH - 5 : COLUMN_WIDTH;
     }
 
     @Override
@@ -157,6 +207,10 @@ public class TitlesScreen extends Screen
     {
         renderBackground(graphics);
         rowHits.clear();
+
+        // While the popup is open, the lists underneath don't react to the mouse.
+        int rowMouseX = selected == null ? mouseX : -1;
+        int rowMouseY = selected == null ? mouseY : -1;
 
         drawBevel(graphics, left, top, PANEL_WIDTH, panelHeight, FRAME_BORDER, FRAME_FILL, FRAME_LIGHT, FRAME_SHADOW);
         graphics.drawString(font, title, (width - font.width(title)) / 2, top + 7, HEADING_TEXT, false);
@@ -172,7 +226,7 @@ public class TitlesScreen extends Screen
             drawRowBox(graphics, leftColumnX(), y, COLUMN_WIDTH, INSET_FILL);
             if (i < EQUIPPED.size())
             {
-                drawTitleRow(graphics, EQUIPPED.get(i), leftColumnX(), y, COLUMN_WIDTH, mouseX, mouseY);
+                drawTitleRow(graphics, EQUIPPED.get(i), leftColumnX(), y, COLUMN_WIDTH, rowMouseX, rowMouseY);
             }
             else
             {
@@ -182,26 +236,26 @@ public class TitlesScreen extends Screen
 
         int shelfLabelY = listTop() + SLOT_COUNT * ROW_HEIGHT + 4;
         graphics.drawString(font, Component.translatable("screen.index_gestorum.always_active"), leftColumnX() + 1, shelfLabelY, HEADING_TEXT, false);
-        int shelfTop = listTop() + SLOT_COUNT * ROW_HEIGHT + SHELF_LABEL_HEIGHT;
-        // If there are more titles than fit, the last row says how many are hidden.
-        int hidden = ALWAYS_ACTIVE.size() - shelfRows;
-        int shown = hidden > 0 ? shelfRows - 1 : ALWAYS_ACTIVE.size();
+        int maxShelfScroll = maxShelfScroll();
+        shelfScrollOffset = Mth.clamp(shelfScrollOffset, 0, maxShelfScroll);
         for (int i = 0; i < shelfRows; i++)
         {
-            int y = shelfTop + i * ROW_HEIGHT;
-            drawRowBox(graphics, leftColumnX(), y, COLUMN_WIDTH, INSET_SHELF_FILL);
-            if (i < shown)
+            int y = shelfTop() + i * ROW_HEIGHT;
+            drawRowBox(graphics, leftColumnX(), y, shelfWidth(), INSET_SHELF_FILL);
+            int index = i + shelfScrollOffset;
+            if (index < ALWAYS_ACTIVE.size())
             {
-                drawTitleRow(graphics, ALWAYS_ACTIVE.get(i), leftColumnX(), y, COLUMN_WIDTH, mouseX, mouseY);
+                drawTitleRow(graphics, ALWAYS_ACTIVE.get(index), leftColumnX(), y, shelfWidth(), rowMouseX, rowMouseY);
             }
-            else if (hidden > 0)
-            {
-                graphics.drawString(font, Component.translatable("screen.index_gestorum.shelf_more", hidden + 1), leftColumnX() + 13, y + 2, MUTED_TEXT, false);
-            }
-            else
+            else if (ALWAYS_ACTIVE.isEmpty())
             {
                 graphics.drawString(font, Component.translatable("screen.index_gestorum.shelf_empty"), leftColumnX() + 13, y + 2, MUTED_TEXT, false);
             }
+        }
+        if (maxShelfScroll > 0)
+        {
+            drawScrollbar(graphics, leftColumnX() + COLUMN_WIDTH - 3, shelfTop(), shelfRows * ROW_HEIGHT,
+                    shelfRows, ALWAYS_ACTIVE.size(), shelfScrollOffset, maxShelfScroll);
         }
 
         // Right: every title, scrollable.
@@ -216,13 +270,21 @@ public class TitlesScreen extends Screen
             {
                 graphics.fill(rightColumnX() + 2, y + 2, rightColumnX() + listWidth() - 1, y + ROW_HEIGHT - 1, 0x3055FF55);
             }
-            drawTitleRow(graphics, t, rightColumnX(), y, listWidth(), mouseX, mouseY);
+            drawTitleRow(graphics, t, rightColumnX(), y, listWidth(), rowMouseX, rowMouseY);
         }
-        if (maxScroll > 0) drawScrollbar(graphics, rightColumnX() + COLUMN_WIDTH - 5, maxScroll);
-
-        drawDetails(graphics);
+        if (maxScroll > 0)
+        {
+            drawScrollbar(graphics, rightColumnX() + COLUMN_WIDTH - 5, listTop() + 2, visibleRows * ROW_HEIGHT - 4,
+                    visibleRows, ALL_TITLES.size(), scrollOffset, maxScroll);
+        }
 
         super.render(graphics, mouseX, mouseY, partialTick);
+
+        if (selected != null)
+        {
+            drawPopup(graphics);
+            return;
+        }
 
         SampleTitle hovered = hitAt(mouseX, mouseY);
         if (hovered != null)
@@ -259,61 +321,85 @@ public class TitlesScreen extends Screen
         graphics.drawString(font, name, x + 13, y + 2, t.rarity().color());
     }
 
-    private void drawDetails(GuiGraphics graphics)
+    // A section is a light blue label on its own line with white text wrapped under it.
+    private record Section(Component label, List<FormattedCharSequence> lines) {}
+
+    private void drawPopup(GuiGraphics graphics)
     {
-        int x = left + PADDING;
-        int y = listTop() + listHeight + 4;
-        int w = PANEL_WIDTH - PADDING * 2;
-        drawBevel(graphics, x, y, w, DETAIL_HEIGHT, INSET_BORDER, INSET_FILL, INSET_SHADOW, INSET_LIGHT);
-
-        int textX = x + 6;
-        int textW = w - 12;
-        if (selected == null)
-        {
-            graphics.drawCenteredString(font, Component.translatable("screen.index_gestorum.select_prompt"),
-                    x + w / 2, y + (DETAIL_HEIGHT - 8) / 2, MUTED_TEXT);
-            return;
-        }
-
-        Rarity rarity = selected.rarity();
-        rarity.drawPip(graphics, textX, y + 6);
-        graphics.drawString(font, selected.name(), textX + 9, y + 5, rarity.color());
-        graphics.drawString(font, rarity.displayName(), x + w - 6 - font.width(rarity.displayName()), y + 5, rarity.color());
-        graphics.hLine(x + 4, x + w - 5, y + 15, INSET_BORDER);
-
-        List<FormattedCharSequence> lines = new ArrayList<>();
-        lines.addAll(font.split(Component.literal(selected.flavor()).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), textW));
-        lines.addAll(font.split(labelled("screen.index_gestorum.bonus", selected.bonus()), textW));
+        int textW = POPUP_WIDTH - POPUP_PADDING * 2;
+        List<FormattedCharSequence> flavor = font.split(
+                Component.literal(selected.flavor()).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), textW);
+        List<Section> sections = new ArrayList<>();
+        sections.add(section("screen.index_gestorum.bonus", selected.bonus(), textW));
         if (selected.hint() != null)
         {
-            lines.addAll(font.split(labelled("screen.index_gestorum.hint", selected.hint()), textW));
+            sections.add(section("screen.index_gestorum.hint", selected.hint(), textW));
         }
         else
         {
-            lines.addAll(font.split(labelled("screen.index_gestorum.how_to_earn", selected.howToEarn()), textW));
+            sections.add(section("screen.index_gestorum.how_to_earn", selected.howToEarn(), textW));
         }
 
-        int lineY = y + 19;
-        int maxLines = (DETAIL_HEIGHT - 21) / LINE_HEIGHT;
-        for (int i = 0; i < lines.size() && i < maxLines; i++)
+        // Height: header, divider, flavor, each section with a gap before it, then the footer.
+        int contentH = 10 + 6 + flavor.size() * LINE_HEIGHT;
+        for (Section s : sections) contentH += 6 + LINE_HEIGHT + s.lines().size() * LINE_HEIGHT;
+        contentH += 6 + LINE_HEIGHT;
+        popupH = contentH + POPUP_PADDING * 2;
+        popupX = left + (PANEL_WIDTH - POPUP_WIDTH) / 2;
+        popupY = Math.max(4, top + (panelHeight - popupH) / 2);
+
+        graphics.pose().pushPose();
+        // Above the rows and their text.
+        graphics.pose().translate(0, 0, 400);
+
+        // Dim the lists behind the popup.
+        graphics.fill(left + 1, top + 1, left + PANEL_WIDTH - 1, top + panelHeight - 1, 0x90000000);
+        drawBevel(graphics, popupX, popupY, POPUP_WIDTH, popupH, FRAME_BORDER, 0xF0142E4E, FRAME_LIGHT, FRAME_SHADOW);
+
+        int x = popupX + POPUP_PADDING;
+        int y = popupY + POPUP_PADDING;
+        Rarity rarity = selected.rarity();
+        rarity.drawPip(graphics, x, y + 1);
+        graphics.drawString(font, selected.name(), x + 9, y, rarity.color());
+        graphics.drawString(font, rarity.displayName(), popupX + POPUP_WIDTH - POPUP_PADDING - font.width(rarity.displayName()), y, rarity.color());
+        y += 10;
+        graphics.hLine(x, popupX + POPUP_WIDTH - POPUP_PADDING - 1, y + 1, INSET_BORDER);
+        y += 6;
+
+        for (FormattedCharSequence line : flavor)
         {
-            graphics.drawString(font, lines.get(i), textX, lineY, 0xFFFFFF);
-            lineY += LINE_HEIGHT;
+            graphics.drawString(font, line, x, y, 0xFFFFFF);
+            y += LINE_HEIGHT;
         }
+        for (Section s : sections)
+        {
+            y += 6;
+            graphics.drawString(font, s.label(), x, y, ACCENT);
+            y += LINE_HEIGHT;
+            for (FormattedCharSequence line : s.lines())
+            {
+                graphics.drawString(font, line, x, y, 0xFFFFFF);
+                y += LINE_HEIGHT;
+            }
+        }
+
+        y += 6;
+        Component footer = Component.translatable("screen.index_gestorum.close_prompt");
+        graphics.drawString(font, footer, popupX + (POPUP_WIDTH - font.width(footer)) / 2, y, MUTED_TEXT, false);
+
+        graphics.pose().popPose();
     }
 
-    private Component labelled(String labelKey, String text)
+    private Section section(String labelKey, String text, int width)
     {
-        return Component.translatable(labelKey).withStyle(s -> s.withColor(ACCENT))
-                .append(Component.literal(" " + text).withStyle(ChatFormatting.WHITE));
+        return new Section(Component.translatable(labelKey),
+                font.split(Component.literal(text).withStyle(ChatFormatting.WHITE), width));
     }
 
-    private void drawScrollbar(GuiGraphics graphics, int x, int maxScroll)
+    private void drawScrollbar(GuiGraphics graphics, int x, int trackTop, int trackHeight, int visible, int total, int offset, int maxOffset)
     {
-        int trackTop = listTop() + 2;
-        int trackHeight = visibleRows * ROW_HEIGHT - 4;
-        int thumbHeight = Math.max(10, trackHeight * visibleRows / ALL_TITLES.size());
-        int thumbTop = trackTop + (trackHeight - thumbHeight) * scrollOffset / maxScroll;
+        int thumbHeight = Math.max(6, trackHeight * visible / total);
+        int thumbTop = trackTop + (trackHeight - thumbHeight) * offset / maxOffset;
         graphics.fill(x, trackTop, x + 3, trackTop + trackHeight, INSET_SHADOW);
         graphics.fill(x, thumbTop, x + 3, thumbTop + thumbHeight, 0xFF000000 | ACCENT);
     }
@@ -337,9 +423,21 @@ public class TitlesScreen extends Screen
         return Math.max(0, ALL_TITLES.size() - visibleRows);
     }
 
+    private int maxShelfScroll()
+    {
+        return Math.max(0, ALWAYS_ACTIVE.size() - shelfRows);
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
+        if (selected != null)
+        {
+            // Clicking outside the popup closes it; clicks inside do nothing.
+            boolean inside = mouseX >= popupX && mouseX < popupX + POPUP_WIDTH && mouseY >= popupY && mouseY < popupY + popupH;
+            if (!inside) selected = null;
+            return true;
+        }
         if (button == 0)
         {
             SampleTitle clicked = hitAt(mouseX, mouseY);
@@ -355,9 +453,16 @@ public class TitlesScreen extends Screen
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta)
     {
+        if (selected != null) return true;
+        int step = (int) Math.signum(delta);
         if (mouseX >= rightColumnX())
         {
-            scrollOffset = Mth.clamp(scrollOffset - (int) Math.signum(delta), 0, maxScroll());
+            scrollOffset = Mth.clamp(scrollOffset - step, 0, maxScroll());
+            return true;
+        }
+        if (mouseY >= shelfTop())
+        {
+            shelfScrollOffset = Mth.clamp(shelfScrollOffset - step, 0, maxShelfScroll());
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, delta);
@@ -366,6 +471,12 @@ public class TitlesScreen extends Screen
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
     {
+        // Esc closes the popup first, then the screen.
+        if (selected != null && keyCode == GLFW.GLFW_KEY_ESCAPE)
+        {
+            selected = null;
+            return true;
+        }
         // Same key that opens the screen also closes it.
         if (ClientEvents.OPEN_TITLES.matches(keyCode, scanCode))
         {

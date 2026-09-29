@@ -11,3 +11,6 @@ build/
 out/
 run/
 runs/
+
+# Personal learning log, local only
+LEARNING.md
