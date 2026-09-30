@@ -14,3 +14,6 @@ runs/
 
 # Personal learning log, local only
 LEARNING.md
+
+# VS Code Java extension build output
+bin/
